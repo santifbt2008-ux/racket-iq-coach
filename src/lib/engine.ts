@@ -383,14 +383,10 @@ export function recommendCustomization(
   return {
     needed: true,
     summary: `A small amount of customization would close the remaining gaps between your priorities and this frame's stock specs. Make one change at a time.`,
-    summaryOnly(),
     suggestions,
-  } as never;
+  };
 }
 
-function summaryOnly() {
-  return undefined as never;
-}
 
 /* ---------------------------- Comparison ---------------------------- */
 
