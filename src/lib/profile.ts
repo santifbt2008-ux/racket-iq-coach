@@ -116,3 +116,27 @@ export const STYLE_LABELS: Record<PlayerType, string> = {
   "serve-volley": "Serve & volley",
   defensive: "Defensive player",
 };
+
+export const LIKE_LABELS: Record<Improvement, string> = {
+  power: "Its power",
+  control: "Its control / precision",
+  spin: "The spin it generates",
+  sweetspot: "The sweet spot size",
+  stability: "How stable it feels",
+  maneuverability: "How fast it swings",
+  comfort: "Comfort on the arm",
+  serve: "How it serves",
+  feel: "The feel / touch",
+};
+
+export const DISLIKE_LABELS: Record<Improvement, string> = {
+  power: "Not enough power",
+  control: "Too little control — balls fly long",
+  spin: "Can't generate enough spin",
+  sweetspot: "Sweet spot feels too small",
+  stability: "Gets pushed around by pace",
+  maneuverability: "Too slow / heavy to swing",
+  comfort: "Harsh or uncomfortable on the arm",
+  serve: "Serve lacks pace or bite",
+  feel: "Feels muted or boardy",
+};
