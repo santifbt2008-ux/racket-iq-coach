@@ -15,7 +15,7 @@ export type Improvement =
 export interface PlayerProfile {
   level: string;
   frequency: string;
-  style: PlayerType | "";
+  styles: PlayerType[];
   forehand: "flat" | "moderate" | "heavy" | "";
   backhand: "one" | "two" | "";
   spin: number;
@@ -27,15 +27,15 @@ export interface PlayerProfile {
   weight: "u300" | "300-305" | "305-310" | "310+" | "any" | "";
   pattern: "16x19" | "18x20" | "any" | "";
   currentRacketId: string;
-  likes: string;
-  dislikes: string;
+  likes: Improvement[];
+  dislikes: Improvement[];
   improvements: Improvement[];
 }
 
 export const emptyProfile: PlayerProfile = {
   level: "",
   frequency: "",
-  style: "",
+  styles: [],
   forehand: "",
   backhand: "",
   spin: 5,
@@ -47,10 +47,11 @@ export const emptyProfile: PlayerProfile = {
   weight: "",
   pattern: "",
   currentRacketId: "",
-  likes: "",
-  dislikes: "",
+  likes: [],
+  dislikes: [],
   improvements: [],
 };
+
 
 const KEY = "racketiq.profile";
 
