@@ -4,7 +4,6 @@ import { ArrowLeft, ArrowRight, RotateCcw, Search } from "lucide-react";
 import { Page, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { RACKETS, racketName, type PlayerType } from "@/data/rackets";
 import {
   emptyProfile,
@@ -12,6 +11,8 @@ import {
   loadProfile,
   saveProfile,
   IMPROVEMENT_LABELS,
+  LIKE_LABELS,
+  DISLIKE_LABELS,
   LEVEL_OPTIONS,
   STYLE_LABELS,
   type Improvement,
@@ -114,7 +115,7 @@ function Questionnaire() {
       case 0:
         return !!profile.level && !!profile.frequency;
       case 1:
-        return !!profile.style;
+        return profile.styles.length > 0;
       case 2:
         return !!profile.forehand && !!profile.backhand;
       case 8:
@@ -203,10 +204,21 @@ function Questionnaire() {
               )}
 
               {step === 1 && (
-                <Field label="Which best describes your game?">
+                <Field label="Which best describes your game? (select all that apply)">
                   <div className="grid gap-3 sm:grid-cols-2">
                     {(Object.keys(STYLE_LABELS) as PlayerType[]).map((s) => (
-                      <OptionButton key={s} selected={profile.style === s} onClick={() => set("style", s)}>
+                      <OptionButton
+                        key={s}
+                        selected={profile.styles.includes(s)}
+                        onClick={() =>
+                          set(
+                            "styles",
+                            profile.styles.includes(s)
+                              ? profile.styles.filter((x) => x !== s)
+                              : [...profile.styles, s],
+                          )
+                        }
+                      >
                         {STYLE_LABELS[s]}
                       </OptionButton>
                     ))}
@@ -364,21 +376,45 @@ function Questionnaire() {
 
               {step === 8 && (
                 <>
-                  <Field label="What do you like about your current racket?">
-                    <Textarea
-                      rows={4}
-                      value={profile.likes}
-                      onChange={(e) => set("likes", e.target.value)}
-                      placeholder="e.g. the feel on volleys and how stable it is against pace"
-                    />
+                  <Field label="What do you like about your current racket? (select all that apply)">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {(Object.keys(LIKE_LABELS) as Improvement[]).map((k) => (
+                        <OptionButton
+                          key={k}
+                          selected={profile.likes.includes(k)}
+                          onClick={() =>
+                            set(
+                              "likes",
+                              profile.likes.includes(k)
+                                ? profile.likes.filter((x) => x !== k)
+                                : [...profile.likes, k],
+                            )
+                          }
+                        >
+                          {LIKE_LABELS[k]}
+                        </OptionButton>
+                      ))}
+                    </div>
                   </Field>
-                  <Field label="What do you dislike about your current racket?">
-                    <Textarea
-                      rows={4}
-                      value={profile.dislikes}
-                      onChange={(e) => set("dislikes", e.target.value)}
-                      placeholder="e.g. I can't get enough spin and it feels heavy late in matches"
-                    />
+                  <Field label="What do you dislike about your current racket? (select all that apply)">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {(Object.keys(DISLIKE_LABELS) as Improvement[]).map((k) => (
+                        <OptionButton
+                          key={k}
+                          selected={profile.dislikes.includes(k)}
+                          onClick={() =>
+                            set(
+                              "dislikes",
+                              profile.dislikes.includes(k)
+                                ? profile.dislikes.filter((x) => x !== k)
+                                : [...profile.dislikes, k],
+                            )
+                          }
+                        >
+                          {DISLIKE_LABELS[k]}
+                        </OptionButton>
+                      ))}
+                    </div>
                   </Field>
                 </>
               )}
