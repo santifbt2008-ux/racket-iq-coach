@@ -19,7 +19,7 @@ export const Route = createFileRoute("/compare")({
       { property: "og:description", content: "Side-by-side racket specifications and a personalized verdict." },
     ],
   }),
-  component: Compare;
+  component: Compare,
 });
 
 const ROWS = [
