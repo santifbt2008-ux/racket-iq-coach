@@ -395,7 +395,7 @@ export function recommendCustomization(
 export function compareForPlayer(profile: PlayerProfile, rackets: Racket[]) {
   const scored = rackets.map((r) => scoreRacket(profile, r)).sort((a, b) => b.overall - a.overall);
   if (!scored.length) return null;
-  const best = scored[0];
+  const best = scored[0]!;
   const lines = scored.slice(1).map((m) => {
     const diffs: string[] = [];
     for (const key of ["spin", "control", "power", "stability", "maneuverability"] as const) {
