@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FindMyRacketRouteImport } from './routes/find-my-racket'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as ExploreIndexRouteImport } from './routes/explore.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const ResultsRoute = ResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/explore/',
+  path: '/explore/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/explore': typeof ExploreIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/find-my-racket' | '/results'
+  fullPaths: '/' | '/find-my-racket' | '/results' | '/explore/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/find-my-racket' | '/results'
-  id: '__root__' | '/' | '/find-my-racket' | '/results'
+  to: '/' | '/find-my-racket' | '/results' | '/explore'
+  id: '__root__' | '/' | '/find-my-racket' | '/results' | '/explore/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FindMyRacketRoute: typeof FindMyRacketRoute
   ResultsRoute: typeof ResultsRoute
+  ExploreIndexRoute: typeof ExploreIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/': {
+      id: '/explore/'
+      path: '/explore'
+      fullPath: '/explore/'
+      preLoaderRoute: typeof ExploreIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FindMyRacketRoute: FindMyRacketRoute,
   ResultsRoute: ResultsRoute,
+  ExploreIndexRoute: ExploreIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
