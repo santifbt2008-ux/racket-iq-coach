@@ -5,7 +5,7 @@
  * source of truth for specifications — nothing here invents specs.
  */
 import { RACKETS, racketName, type Racket } from "@/data/rackets";
-import { IMPROVEMENT_LABELS, STYLE_LABELS, type PlayerProfile } from "@/lib/profile";
+import { DISLIKE_LABELS, IMPROVEMENT_LABELS, STYLE_LABELS, type PlayerProfile } from "@/lib/profile";
 
 export interface DimensionScore {
   key: string;
@@ -83,8 +83,10 @@ function patternScore(profile: PlayerProfile, r: Racket) {
 }
 
 function styleScore(profile: PlayerProfile, r: Racket) {
-  if (!profile.style) return 80;
-  return r.recommended_player_types.includes(profile.style) ? 100 : 68;
+  if (!profile.styles.length) return 80;
+  const hits = profile.styles.filter((s) => r.recommended_player_types.includes(s)).length;
+  if (!hits) return 68;
+  return hits === profile.styles.length ? 100 : 88;
 }
 
 function levelBucket(level: string): "beginner" | "intermediate" | "advanced" | "tournament" {
@@ -102,7 +104,13 @@ function levelScore(profile: PlayerProfile, r: Racket) {
 /** Improvement selections nudge the desired attribute values upward. */
 function desiredAttributes(profile: PlayerProfile) {
   const bump = (key: string, base: number) =>
-    clamp(base + (profile.improvements.includes(key as never) ? 1.5 : 0), 1, 10);
+    clamp(
+      base +
+        (profile.improvements.includes(key as never) ? 1.5 : 0) +
+        (profile.dislikes.includes(key as never) ? 1 : 0),
+      1,
+      10,
+    );
   return {
     spin: bump("spin", target(profile.spin)),
     control: bump("control", target(profile.control)),
@@ -211,9 +219,10 @@ function buildReasons(profile: PlayerProfile, m: MatchResult): string[] {
       `With maneuverability rated ${profile.maneuverability}/10 by you, the ${r.swingweight} swingweight stays quick enough for fast exchanges and defensive resets.`,
     );
   }
-  if (profile.style && r.recommended_player_types.includes(profile.style)) {
+  const matchedStyle = profile.styles.find((s) => r.recommended_player_types.includes(s));
+  if (matchedStyle) {
     reasons.push(
-      `It is a natural fit for your ${STYLE_LABELS[profile.style].toLowerCase()} game — the frame is designed around exactly that pattern of play.`,
+      `It is a natural fit for your ${STYLE_LABELS[matchedStyle].toLowerCase()} game — the frame is designed around exactly that pattern of play.`,
     );
   }
   if (profile.improvements.includes("comfort") && r.comfort_score >= 8) {
@@ -242,9 +251,10 @@ function buildReasons(profile: PlayerProfile, m: MatchResult): string[] {
       }
     }
   }
-  if (profile.dislikes.trim()) {
+  if (profile.dislikes.length) {
+    const issues = profile.dislikes.map((d) => DISLIKE_LABELS[d].toLowerCase()).slice(0, 2).join(" and ");
     reasons.push(
-      `You said you dislike: "${profile.dislikes.trim()}" — this frame scores ${Math.round(m.overall)}% against your profile, with its strongest fit in ${strongestDims(m).join(" and ")}.`,
+      `You flagged ${issues} on your current racket — this frame scores ${Math.round(m.overall)}% against your profile overall, with its strongest fit in ${strongestDims(m).join(" and ")}.`,
     );
   }
   if (reasons.length < 3) {
