@@ -15,7 +15,7 @@ export type Improvement =
 export interface PlayerProfile {
   level: string;
   frequency: string;
-  style: PlayerType | "";
+  styles: PlayerType[];
   forehand: "flat" | "moderate" | "heavy" | "";
   backhand: "one" | "two" | "";
   spin: number;
@@ -27,15 +27,15 @@ export interface PlayerProfile {
   weight: "u300" | "300-305" | "305-310" | "310+" | "any" | "";
   pattern: "16x19" | "18x20" | "any" | "";
   currentRacketId: string;
-  likes: string;
-  dislikes: string;
+  likes: Improvement[];
+  dislikes: Improvement[];
   improvements: Improvement[];
 }
 
 export const emptyProfile: PlayerProfile = {
   level: "",
   frequency: "",
-  style: "",
+  styles: [],
   forehand: "",
   backhand: "",
   spin: 5,
@@ -47,10 +47,11 @@ export const emptyProfile: PlayerProfile = {
   weight: "",
   pattern: "",
   currentRacketId: "",
-  likes: "",
-  dislikes: "",
+  likes: [],
+  dislikes: [],
   improvements: [],
 };
+
 
 const KEY = "racketiq.profile";
 
@@ -114,4 +115,28 @@ export const STYLE_LABELS: Record<PlayerType, string> = {
   counterpuncher: "Counterpuncher",
   "serve-volley": "Serve & volley",
   defensive: "Defensive player",
+};
+
+export const LIKE_LABELS: Record<Improvement, string> = {
+  power: "Its power",
+  control: "Its control / precision",
+  spin: "The spin it generates",
+  sweetspot: "The sweet spot size",
+  stability: "How stable it feels",
+  maneuverability: "How fast it swings",
+  comfort: "Comfort on the arm",
+  serve: "How it serves",
+  feel: "The feel / touch",
+};
+
+export const DISLIKE_LABELS: Record<Improvement, string> = {
+  power: "Not enough power",
+  control: "Too little control — balls fly long",
+  spin: "Can't generate enough spin",
+  sweetspot: "Sweet spot feels too small",
+  stability: "Gets pushed around by pace",
+  maneuverability: "Too slow / heavy to swing",
+  comfort: "Harsh or uncomfortable on the arm",
+  serve: "Serve lacks pace or bite",
+  feel: "Feels muted or boardy",
 };

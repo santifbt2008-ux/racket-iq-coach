@@ -10,11 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as FindMyRacketRouteImport } from './routes/find-my-racket'
+import { Route as ResultsRouteImport } from './routes/results'
+import { Route as ExploreIndexRouteImport } from './routes/explore.index'
+import { Route as ExploreRacketIdRouteImport } from './routes/explore.$racketId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FindMyRacketRoute = FindMyRacketRouteImport.update({
@@ -22,31 +31,81 @@ const FindMyRacketRoute = FindMyRacketRouteImport.update({
   path: '/find-my-racket',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/explore/',
+  path: '/explore/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRacketIdRoute = ExploreRacketIdRouteImport.update({
+  id: '/explore/$racketId',
+  path: '/explore/$racketId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/results': typeof ResultsRoute
+  '/explore/$racketId': typeof ExploreRacketIdRoute
+  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/results': typeof ResultsRoute
+  '/explore/$racketId': typeof ExploreRacketIdRoute
+  '/explore': typeof ExploreIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/results': typeof ResultsRoute
+  '/explore/$racketId': typeof ExploreRacketIdRoute
+  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/find-my-racket'
+  fullPaths:
+    | '/'
+    | '/compare'
+    | '/find-my-racket'
+    | '/results'
+    | '/explore/$racketId'
+    | '/explore/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/find-my-racket'
-  id: '__root__' | '/' | '/find-my-racket'
+  to:
+    | '/'
+    | '/compare'
+    | '/find-my-racket'
+    | '/results'
+    | '/explore/$racketId'
+    | '/explore'
+  id:
+    | '__root__'
+    | '/'
+    | '/compare'
+    | '/find-my-racket'
+    | '/results'
+    | '/explore/$racketId'
+    | '/explore/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompareRoute: typeof CompareRoute
   FindMyRacketRoute: typeof FindMyRacketRoute
+  ResultsRoute: typeof ResultsRoute
+  ExploreRacketIdRoute: typeof ExploreRacketIdRoute
+  ExploreIndexRoute: typeof ExploreIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +117,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/find-my-racket': {
       id: '/find-my-racket'
       path: '/find-my-racket'
@@ -65,12 +131,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FindMyRacketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/': {
+      id: '/explore/'
+      path: '/explore'
+      fullPath: '/explore/'
+      preLoaderRoute: typeof ExploreIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/$racketId': {
+      id: '/explore/$racketId'
+      path: '/explore/$racketId'
+      fullPath: '/explore/$racketId'
+      preLoaderRoute: typeof ExploreRacketIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompareRoute: CompareRoute,
   FindMyRacketRoute: FindMyRacketRoute,
+  ResultsRoute: ResultsRoute,
+  ExploreRacketIdRoute: ExploreRacketIdRoute,
+  ExploreIndexRoute: ExploreIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
