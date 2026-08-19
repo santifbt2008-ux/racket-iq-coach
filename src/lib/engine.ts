@@ -128,7 +128,9 @@ function weights(profile: PlayerProfile) {
     level: 1.0,
   };
   for (const imp of profile.improvements) {
-    if (imp in w) (w as Record<string, number>)[imp] += 0.6;
+    const rec = w as unknown as Record<string, number>;
+    if (typeof rec[imp] === "number") rec[imp] = (rec[imp] ?? 0) + 0.6;
+
     if (imp === "serve") w.power += 0.3;
     if (imp === "sweetspot") w.stability += 0.3;
     if (imp === "feel") w.control += 0.3;
