@@ -121,20 +121,44 @@ function Results() {
 
           {/* Primary match */}
           <section className="panel elevated mt-10 grid gap-8 p-6 md:grid-cols-[.8fr_1.2fr] md:p-10">
-            <RacketVisual label={racketName(top.racket)} className="min-h-[320px]" />
+            <RacketVisual label={racketName(top.racket)} image={top.racket.image} className="min-h-[320px]" />
             <div>
               <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-widest text-primary-foreground">
                 #1 Match
               </span>
               <h2 className="text-display mt-5 text-4xl font-extrabold">{racketName(top.racket)}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {top.racket.brand} · {top.racket.generation} · {top.racket.head_size} sq in · {top.racket.weight}g ·{" "}
+                {top.racket.brand} · {top.racket.year} · {top.racket.head_size} sq in · {top.racket.weight}g ·{" "}
                 {top.racket.string_pattern}
               </p>
               <div className="mt-6 flex items-baseline gap-3">
                 <span className="text-display text-6xl font-extrabold text-primary">{top.overall}%</span>
                 <span className="text-sm uppercase tracking-widest text-muted-foreground">Match</span>
               </div>
+
+              <h3 className="mt-8 text-lg font-bold">Key specifications</h3>
+              <dl className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+                {(
+                  [
+                    ["Head size", `${top.racket.head_size} sq in`],
+                    ["Weight (strung)", `${top.racket.strung_weight} g`],
+                    ["Weight (unstrung)", `${top.racket.unstrung_weight} g`],
+                    ["Balance", `${top.racket.balance} cm`],
+                    ["Swingweight", `${top.racket.swingweight}`],
+                    ["Beam", `${top.racket.beam} mm`],
+                    ["String pattern", top.racket.string_pattern],
+                    ["Stiffness", `${top.racket.stiffness} RA`],
+                    ["Rec. tension", `${top.racket.tension_min}–${top.racket.tension_max} lbs`],
+                    ["Composition", top.racket.composition],
+                  ] as [string, string][]
+                ).map(([k, v]) => (
+                  <div key={k} className="flex justify-between border-b border-border pb-1.5 text-sm">
+                    <dt className="text-muted-foreground">{k}</dt>
+                    <dd className="font-semibold">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+
               <h3 className="mt-8 text-lg font-bold">Why it fits your game</h3>
               <ul className="mt-3 space-y-3">
                 {top.reasons.map((r) => (
@@ -144,15 +168,29 @@ function Results() {
                   </li>
                 ))}
               </ul>
-              <Link
-                to="/explore/$racketId"
-                params={{ racketId: top.racket.id }}
-                className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-              >
-                View full specifications <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="mt-7 flex flex-wrap items-center gap-5">
+                <Link
+                  to="/explore/$racketId"
+                  params={{ racketId: top.racket.id }}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                >
+                  View full specifications <ArrowRight className="h-4 w-4" />
+                </Link>
+                {top.racket.product_link && (
+                  <a
+                    href={top.racket.product_link.url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-secondary"
+                  >
+                    {top.racket.product_link.label} <ArrowRight className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+              {!top.racket.image && <p className="mt-4 text-xs text-muted-foreground">{IMAGE_POLICY_NOTE}</p>}
             </div>
           </section>
+
 
           {/* Match score breakdown */}
           <section className="mt-14">
