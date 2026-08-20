@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { DATA_DISCLAIMER } from "@/data/rackets";
+import type { RacketImage } from "@/data/racket-media";
 
 const nav = [
   { to: "/find-my-racket", label: "Find My Racket" },
