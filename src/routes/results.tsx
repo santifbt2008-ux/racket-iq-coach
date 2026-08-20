@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, RotateCcw } from "lucide-react";
 import { Page, RacketVisual, ScoreBar, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { DATA_DISCLAIMER, getRacket, racketName } from "@/data/rackets";
+import { IMAGE_POLICY_NOTE } from "@/data/racket-media";
 import { recommend, recommendCustomization, recommendString } from "@/lib/engine";
 import { useStoredProfile } from "@/lib/profile";
 
