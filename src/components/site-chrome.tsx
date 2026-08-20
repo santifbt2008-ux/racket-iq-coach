@@ -63,8 +63,29 @@ export function Page({ children }: { children: ReactNode }) {
   return <div className="mx-auto w-full max-w-6xl px-5 py-12">{children}</div>;
 }
 
-export function RacketVisual({ label, className = "" }: { label: string; className?: string }) {
+export function RacketVisual({
+  label,
+  className = "",
+  image = null,
+}: {
+  label: string;
+  className?: string;
+  image?: RacketImage | null;
+}) {
+  if (image) {
+    return (
+      <figure
+        className={`relative grid place-items-center overflow-hidden rounded-2xl border border-border bg-surface-strong ${className}`}
+      >
+        <img src={image.url} alt={`${label} tennis racket`} loading="lazy" className="h-full w-full object-contain p-6" />
+        <figcaption className="absolute bottom-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+          {image.credit}
+        </figcaption>
+      </figure>
+    );
+  }
   return (
+
     <div
       className={`court-grid relative grid place-items-center overflow-hidden rounded-2xl border border-border bg-surface-strong ${className}`}
       role="img"
