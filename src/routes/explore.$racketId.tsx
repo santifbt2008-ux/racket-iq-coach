@@ -100,7 +100,7 @@ function Detail() {
             ← Back to all rackets
           </Link>
           <div className="mt-6 grid gap-10 md:grid-cols-[.8fr_1.2fr]">
-            <RacketVisual label={racketName(r)} className="min-h-[340px]" />
+            <RacketVisual label={racketName(r)} image={r.image} className="min-h-[340px]" />
             <div>
               <p className="eyebrow">{r.brand}</p>
               <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">{r.model}</h1>
