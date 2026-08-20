@@ -68,16 +68,20 @@ function Detail() {
   const { racket: r } = Route.useLoaderData();
   const specs: [string, string][] = [
     ["Head size", `${r.head_size} sq in`],
-    ["Weight (strung)", `${r.weight} g`],
+    ["Weight (strung)", `${r.strung_weight} g`],
+    ["Weight (unstrung)", `${r.unstrung_weight} g`],
     ["Balance", `${r.balance} cm`],
     ["Swingweight", `${r.swingweight}`],
     ["Length", `${r.length} in`],
     ["Beam", `${r.beam} mm`],
     ["String pattern", r.string_pattern],
     ["Stiffness", `${r.stiffness} RA`],
-    ["Generation", r.generation],
+    ["Recommended tension", `${r.tension_min}–${r.tension_max} lbs`],
+    ["Composition", r.composition],
+    ["Model year", r.year],
     ["Indicative price", `$${r.price}`],
   ];
+
   const ratings: [string, number][] = [
     ["Power", r.power_score],
     ["Control", r.control_score],
