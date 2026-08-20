@@ -15,7 +15,8 @@ export type PlayerType =
 
 export type Level = "beginner" | "intermediate" | "advanced" | "tournament";
 
-export interface Racket {
+/** Fields authored per racket in the seed list below. */
+export interface RacketSeed {
   id: string;
   brand: string;
   model: string;
@@ -38,12 +39,43 @@ export interface Racket {
   recommended_level: Level[];
   price: number; // USD, indicative
   description: string;
+
+  // --- Optional manufacturer-sourced fields (filled as verified data lands) ---
+  unstrung_weight?: number; // grams
+  strung_weight?: number; // grams (defaults to `weight`)
+  tension_min?: number; // lbs
+  tension_max?: number; // lbs
+  composition?: string; // frame material
+  year?: string; // current model year
+  /** Official manufacturer product page the specs were taken from. */
+  spec_source_url?: string;
+  /** Explicit product/affiliate URL; otherwise resolved from the brand catalogue. */
+  product_url?: string;
+  /**
+   * Authorized image only. Leave empty unless the licence is documented —
+   * see src/data/racket-media.ts. Never point this at a retailer's photo.
+   */
+  image_url?: string;
+}
+
+export interface Racket extends RacketSeed {
+  unstrung_weight: number;
+  strung_weight: number;
+  tension_min: number;
+  tension_max: number;
+  composition: string;
+  year: string;
+  image_url: string; // "" when no authorized image is available
+  image: RacketImage | null;
+  product_link: ProductLink | null;
+  spec_source_url: string;
 }
 
 export const DATA_DISCLAIMER =
   "Sample data — specifications are approximate demo values, not verified manufacturer specs.";
 
-export const RACKETS: Racket[] = [
+const RACKET_SEED: RacketSeed[] = [
+
   {
     id: "yonex-vcore-98",
     brand: "Yonex",
