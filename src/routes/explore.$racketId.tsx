@@ -164,13 +164,41 @@ function Detail() {
                 </div>
               </div>
 
-              <Link
-                to="/find-my-racket"
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
-              >
-                See if this racket fits YOUR game <ArrowRight className="h-4 w-4" />
-              </Link>
-              <p className="mt-6 text-xs text-muted-foreground">{DATA_DISCLAIMER}</p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Link
+                  to="/find-my-racket"
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
+                >
+                  See if this racket fits YOUR game <ArrowRight className="h-4 w-4" />
+                </Link>
+                {r.product_link && (
+                  <a
+                    href={r.product_link.url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 font-semibold hover:bg-secondary"
+                  >
+                    {r.product_link.label} <ArrowRight className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+              {r.spec_source_url && (
+                <p className="mt-6 text-xs text-muted-foreground">
+                  Specification source:{" "}
+                  <a
+                    href={r.spec_source_url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="underline hover:text-foreground"
+                  >
+                    official {r.brand} racket catalogue
+                  </a>
+                  .
+                </p>
+              )}
+              <p className="mt-2 text-xs text-muted-foreground">{DATA_DISCLAIMER}</p>
+              {!r.image && <p className="mt-2 text-xs text-muted-foreground">{IMAGE_POLICY_NOTE}</p>}
+
             </div>
           </div>
 
