@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Page, RacketVisual, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { DATA_DISCLAIMER, RACKETS, getRacket, racketName, type Racket } from "@/data/rackets";
+import { IMAGE_POLICY_NOTE } from "@/data/racket-media";
 import { STYLE_LABELS } from "@/lib/profile";
 
 export const Route = createFileRoute("/explore/$racketId")({
