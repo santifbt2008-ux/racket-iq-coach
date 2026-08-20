@@ -6,6 +6,9 @@
  * any of this as fact. Add new rackets by appending objects to `RACKETS`.
  */
 
+import { resolveRacketImage, type RacketImage } from "./racket-media";
+import { BRAND_SOURCES, resolveProductLink, type ProductLink } from "./racket-sources";
+
 export type PlayerType =
   | "aggressive-baseliner"
   | "all-court"
