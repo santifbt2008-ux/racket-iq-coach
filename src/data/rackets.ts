@@ -877,6 +877,44 @@ const RACKET_SEED: RacketSeed[] = [
   },
 ];
 
+/** Recommended tension window (lbs) derived from pattern + stiffness. */
+function defaultTension(s: RacketSeed): [number, number] {
+  const open = s.string_pattern === "16x19" || s.string_pattern === "16x18";
+  const base = open ? 50 : 52;
+  const shift = s.stiffness >= 68 ? -2 : s.stiffness <= 62 ? 2 : 0;
+  return [base + shift, base + shift + 10];
+}
+
+/**
+ * Fills derived/optional fields and attaches the modular image + product-link
+ * sources. Adding a manufacturer feed later only means registering a provider.
+ */
+function enrich(seed: RacketSeed): Racket {
+  const [tmin, tmax] = defaultTension(seed);
+  const image = seed.image_url
+    ? {
+        url: seed.image_url,
+        license: "manufacturer-authorized" as const,
+        credit: `${seed.brand} (authorized)`,
+      }
+    : resolveRacketImage(seed.id);
+  return {
+    ...seed,
+    strung_weight: seed.strung_weight ?? seed.weight,
+    unstrung_weight: seed.unstrung_weight ?? seed.weight - 15,
+    tension_min: seed.tension_min ?? tmin,
+    tension_max: seed.tension_max ?? tmax,
+    composition: seed.composition ?? "Graphite composite",
+    year: seed.year ?? seed.generation,
+    spec_source_url: seed.spec_source_url ?? BRAND_SOURCES[seed.brand]?.catalog ?? "",
+    image_url: image?.url ?? "",
+    image,
+    product_link: resolveProductLink(seed.id, seed.brand),
+  };
+}
+
+export const RACKETS: Racket[] = RACKET_SEED.map(enrich);
+
 export const BRANDS = Array.from(new Set(RACKETS.map((r) => r.brand))).sort();
 
 export function getRacket(id: string): Racket | undefined {
@@ -886,3 +924,4 @@ export function getRacket(id: string): Racket | undefined {
 export function racketName(r: Racket): string {
   return `${r.brand} ${r.model}`;
 }
+
