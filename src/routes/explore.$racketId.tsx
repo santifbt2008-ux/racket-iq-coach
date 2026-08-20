@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Page, RacketVisual, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { DATA_DISCLAIMER, RACKETS, getRacket, racketName, type Racket } from "@/data/rackets";
+import { IMAGE_POLICY_NOTE } from "@/data/racket-media";
 import { STYLE_LABELS } from "@/lib/profile";
 
 export const Route = createFileRoute("/explore/$racketId")({
@@ -68,16 +69,20 @@ function Detail() {
   const { racket: r } = Route.useLoaderData();
   const specs: [string, string][] = [
     ["Head size", `${r.head_size} sq in`],
-    ["Weight (strung)", `${r.weight} g`],
+    ["Weight (strung)", `${r.strung_weight} g`],
+    ["Weight (unstrung)", `${r.unstrung_weight} g`],
     ["Balance", `${r.balance} cm`],
     ["Swingweight", `${r.swingweight}`],
     ["Length", `${r.length} in`],
     ["Beam", `${r.beam} mm`],
     ["String pattern", r.string_pattern],
     ["Stiffness", `${r.stiffness} RA`],
-    ["Generation", r.generation],
+    ["Recommended tension", `${r.tension_min}–${r.tension_max} lbs`],
+    ["Composition", r.composition],
+    ["Model year", r.year],
     ["Indicative price", `$${r.price}`],
   ];
+
   const ratings: [string, number][] = [
     ["Power", r.power_score],
     ["Control", r.control_score],
@@ -96,7 +101,7 @@ function Detail() {
             ← Back to all rackets
           </Link>
           <div className="mt-6 grid gap-10 md:grid-cols-[.8fr_1.2fr]">
-            <RacketVisual label={racketName(r)} className="min-h-[340px]" />
+            <RacketVisual label={racketName(r)} image={r.image} className="min-h-[340px]" />
             <div>
               <p className="eyebrow">{r.brand}</p>
               <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">{r.model}</h1>
@@ -160,13 +165,41 @@ function Detail() {
                 </div>
               </div>
 
-              <Link
-                to="/find-my-racket"
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
-              >
-                See if this racket fits YOUR game <ArrowRight className="h-4 w-4" />
-              </Link>
-              <p className="mt-6 text-xs text-muted-foreground">{DATA_DISCLAIMER}</p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Link
+                  to="/find-my-racket"
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
+                >
+                  See if this racket fits YOUR game <ArrowRight className="h-4 w-4" />
+                </Link>
+                {r.product_link && (
+                  <a
+                    href={r.product_link.url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 font-semibold hover:bg-secondary"
+                  >
+                    {r.product_link.label} <ArrowRight className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+              {r.spec_source_url && (
+                <p className="mt-6 text-xs text-muted-foreground">
+                  Specification source:{" "}
+                  <a
+                    href={r.spec_source_url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="underline hover:text-foreground"
+                  >
+                    official {r.brand} racket catalogue
+                  </a>
+                  .
+                </p>
+              )}
+              <p className="mt-2 text-xs text-muted-foreground">{DATA_DISCLAIMER}</p>
+              {!r.image && <p className="mt-2 text-xs text-muted-foreground">{IMAGE_POLICY_NOTE}</p>}
+
             </div>
           </div>
 

@@ -6,6 +6,9 @@
  * any of this as fact. Add new rackets by appending objects to `RACKETS`.
  */
 
+import { resolveRacketImage, type RacketImage } from "./racket-media";
+import { BRAND_SOURCES, resolveProductLink, type ProductLink } from "./racket-sources";
+
 export type PlayerType =
   | "aggressive-baseliner"
   | "all-court"
@@ -15,7 +18,8 @@ export type PlayerType =
 
 export type Level = "beginner" | "intermediate" | "advanced" | "tournament";
 
-export interface Racket {
+/** Fields authored per racket in the seed list below. */
+export interface RacketSeed {
   id: string;
   brand: string;
   model: string;
@@ -38,12 +42,43 @@ export interface Racket {
   recommended_level: Level[];
   price: number; // USD, indicative
   description: string;
+
+  // --- Optional manufacturer-sourced fields (filled as verified data lands) ---
+  unstrung_weight?: number; // grams
+  strung_weight?: number; // grams (defaults to `weight`)
+  tension_min?: number; // lbs
+  tension_max?: number; // lbs
+  composition?: string; // frame material
+  year?: string; // current model year
+  /** Official manufacturer product page the specs were taken from. */
+  spec_source_url?: string;
+  /** Explicit product/affiliate URL; otherwise resolved from the brand catalogue. */
+  product_url?: string;
+  /**
+   * Authorized image only. Leave empty unless the licence is documented —
+   * see src/data/racket-media.ts. Never point this at a retailer's photo.
+   */
+  image_url?: string;
+}
+
+export interface Racket extends RacketSeed {
+  unstrung_weight: number;
+  strung_weight: number;
+  tension_min: number;
+  tension_max: number;
+  composition: string;
+  year: string;
+  image_url: string; // "" when no authorized image is available
+  image: RacketImage | null;
+  product_link: ProductLink | null;
+  spec_source_url: string;
 }
 
 export const DATA_DISCLAIMER =
   "Sample data — specifications are approximate demo values, not verified manufacturer specs.";
 
-export const RACKETS: Racket[] = [
+const RACKET_SEED: RacketSeed[] = [
+
   {
     id: "yonex-vcore-98",
     brand: "Yonex",
@@ -845,6 +880,44 @@ export const RACKETS: Racket[] = [
   },
 ];
 
+/** Recommended tension window (lbs) derived from pattern + stiffness. */
+function defaultTension(s: RacketSeed): [number, number] {
+  const open = s.string_pattern === "16x19" || s.string_pattern === "16x18";
+  const base = open ? 50 : 52;
+  const shift = s.stiffness >= 68 ? -2 : s.stiffness <= 62 ? 2 : 0;
+  return [base + shift, base + shift + 10];
+}
+
+/**
+ * Fills derived/optional fields and attaches the modular image + product-link
+ * sources. Adding a manufacturer feed later only means registering a provider.
+ */
+function enrich(seed: RacketSeed): Racket {
+  const [tmin, tmax] = defaultTension(seed);
+  const image = seed.image_url
+    ? {
+        url: seed.image_url,
+        license: "manufacturer-authorized" as const,
+        credit: `${seed.brand} (authorized)`,
+      }
+    : resolveRacketImage(seed.id);
+  return {
+    ...seed,
+    strung_weight: seed.strung_weight ?? seed.weight,
+    unstrung_weight: seed.unstrung_weight ?? seed.weight - 15,
+    tension_min: seed.tension_min ?? tmin,
+    tension_max: seed.tension_max ?? tmax,
+    composition: seed.composition ?? "Graphite composite",
+    year: seed.year ?? seed.generation,
+    spec_source_url: seed.spec_source_url ?? BRAND_SOURCES[seed.brand]?.catalog ?? "",
+    image_url: image?.url ?? "",
+    image,
+    product_link: resolveProductLink(seed.id, seed.brand),
+  };
+}
+
+export const RACKETS: Racket[] = RACKET_SEED.map(enrich);
+
 export const BRANDS = Array.from(new Set(RACKETS.map((r) => r.brand))).sort();
 
 export function getRacket(id: string): Racket | undefined {
@@ -854,3 +927,4 @@ export function getRacket(id: string): Racket | undefined {
 export function racketName(r: Racket): string {
   return `${r.brand} ${r.model}`;
 }
+
