@@ -9,10 +9,10 @@ import { lovable } from "@/integrations/lovable";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — RacketIQ admin access" },
-      { name: "description", content: "Sign in to RacketIQ to manage the tennis racket catalog database." },
-      { property: "og:title", content: "Sign in — RacketIQ" },
-      { property: "og:description", content: "Access the RacketIQ racket catalog admin tools." },
+      { title: "Iniciar sesión — Acceso de administrador de RacketIQ" },
+      { name: "description", content: "Inicia sesión en RacketIQ para gestionar la base de datos del catálogo de raquetas de tenis." },
+      { property: "og:title", content: "Iniciar sesión — RacketIQ" },
+      { property: "og:description", content: "Accede a las herramientas de administración del catálogo de raquetas de RacketIQ." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -45,7 +45,7 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/admin` },
         });
         if (error) throw error;
-        toast.success("Account created — check your email if confirmation is required.");
+        toast.success("Cuenta creada — revisa tu correo si se requiere confirmación.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -53,7 +53,7 @@ function AuthPage() {
       const { data } = await supabase.auth.getSession();
       if (data.session) navigate({ to: "/admin" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Authentication failed");
+      toast.error(err instanceof Error ? err.message : "Error de autenticación");
     } finally {
       setBusy(false);
     }
@@ -62,7 +62,7 @@ function AuthPage() {
   const google = async () => {
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
     if (result.error) {
-      toast.error("Google sign-in failed");
+      toast.error("Error al iniciar sesión con Google");
       return;
     }
     if (result.redirected) return;
@@ -75,24 +75,24 @@ function AuthPage() {
       <main>
         <Page>
           <div className="mx-auto max-w-md">
-            <p className="eyebrow">Account</p>
+            <p className="eyebrow">Cuenta</p>
             <h1 className="text-display mt-3 text-4xl font-extrabold">
-              {mode === "signin" ? "Sign in" : "Create account"}
+              {mode === "signin" ? "Iniciar sesión" : "Crear cuenta"}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Catalog administration requires an account with admin access.
+              La administración del catálogo requiere una cuenta con acceso de administrador.
             </p>
 
             <form onSubmit={submit} className="panel mt-8 space-y-4 p-6">
               <div>
                 <label htmlFor="email" className="mb-1.5 block text-sm text-muted-foreground">
-                  Email
+                  Correo electrónico
                 </label>
                 <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div>
                 <label htmlFor="password" className="mb-1.5 block text-sm text-muted-foreground">
-                  Password
+                  Contraseña
                 </label>
                 <Input
                   id="password"
@@ -108,23 +108,23 @@ function AuthPage() {
                 disabled={busy}
                 className="w-full rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground disabled:opacity-60"
               >
-                {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Sign up"}
+                {busy ? "Espera un momento…" : mode === "signin" ? "Iniciar sesión" : "Registrarse"}
               </button>
               <button
                 type="button"
                 onClick={google}
                 className="w-full rounded-full border border-border px-6 py-3 font-semibold hover:bg-secondary"
               >
-                Continue with Google
+                Continuar con Google
               </button>
               <p className="pt-2 text-center text-sm text-muted-foreground">
-                {mode === "signin" ? "No account yet?" : "Already have an account?"}{" "}
+                {mode === "signin" ? "¿Aún no tienes una cuenta?" : "¿Ya tienes una cuenta?"}{" "}
                 <button
                   type="button"
                   className="underline hover:text-foreground"
                   onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
                 >
-                  {mode === "signin" ? "Sign up" : "Sign in"}
+                  {mode === "signin" ? "Regístrate" : "Inicia sesión"}
                 </button>
               </p>
             </form>

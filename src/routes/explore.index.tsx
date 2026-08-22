@@ -5,20 +5,21 @@ import { Page, RacketVisual, SiteFooter, SiteHeader } from "@/components/site-ch
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { BRANDS, DATA_DISCLAIMER, RACKETS, racketName } from "@/data/rackets";
+import { formatMXN, mxnToUsd, usdToMxn } from "@/lib/format";
 
 export const Route = createFileRoute("/explore/")({
   head: () => ({
     meta: [
-      { title: "Explore Rackets — searchable tennis racket database | RacketIQ" },
+      { title: "Explorar Raquetas — base de datos buscable de raquetas de tenis | RacketIQ" },
       {
         name: "description",
         content:
-          "Search and filter tennis rackets by brand, head size, weight, string pattern, power, control and spin.",
+          "Busca y filtra raquetas de tenis por marca, tamaño de cabeza, peso, patrón de encordado, potencia, control y efecto.",
       },
-      { property: "og:title", content: "Explore Rackets — RacketIQ" },
+      { property: "og:title", content: "Explorar Raquetas — RacketIQ" },
       {
         property: "og:description",
-        content: "A searchable, filterable tennis racket specification database.",
+        content: "Una base de datos de especificaciones de raquetas de tenis, buscable y filtrable.",
       },
     ],
   }),
@@ -28,6 +29,13 @@ export const Route = createFileRoute("/explore/")({
 const HEAD_SIZES = ["95–97", "98–99", "100", "102+"] as const;
 const WEIGHTS = ["Under 300g", "300–305g", "305–310g", "310g+"] as const;
 const PATTERNS = ["16x19", "18x20", "16x20", "16x18"] as const;
+
+const WEIGHT_LABELS: Record<(typeof WEIGHTS)[number], string> = {
+  "Under 300g": "Menos de 300g",
+  "300–305g": "300–305g",
+  "305–310g": "305–310g",
+  "310g+": "310g+",
+};
 
 function Chip({
   active,
@@ -53,6 +61,9 @@ function Chip({
   );
 }
 
+const MAX_PRICE_MIN_MXN = Math.round(usdToMxn(150));
+const MAX_PRICE_MAX_MXN = Math.round(usdToMxn(300));
+
 function Explore() {
   const [q, setQ] = useState("");
   const [brands, setBrands] = useState<string[]>([]);
@@ -62,10 +73,12 @@ function Explore() {
   const [minPower, setMinPower] = useState(1);
   const [minControl, setMinControl] = useState(1);
   const [minSpin, setMinSpin] = useState(1);
-  const [maxPrice, setMaxPrice] = useState(300);
+  const [maxPriceMxn, setMaxPriceMxn] = useState(MAX_PRICE_MAX_MXN);
 
   const toggle = (list: string[], set: (v: string[]) => void, v: string) =>
     set(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
+
+  const maxPriceUsd = mxnToUsd(maxPriceMxn);
 
   const results = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -97,18 +110,18 @@ function Explore() {
       if (patterns.length && !patterns.includes(r.string_pattern)) return false;
       if (r.power_score < minPower || r.control_score < minControl || r.spin_score < minSpin)
         return false;
-      if (r.price > maxPrice) return false;
+      if (r.price > maxPriceUsd) return false;
       return true;
     });
-  }, [q, brands, heads, weights, patterns, minPower, minControl, minSpin, maxPrice]);
+  }, [q, brands, heads, weights, patterns, minPower, minControl, minSpin, maxPriceUsd]);
 
   return (
     <>
       <SiteHeader />
       <main>
         <Page>
-          <p className="eyebrow">Racket database</p>
-          <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">Explore Rackets</h1>
+          <p className="eyebrow">Base de datos de raquetas</p>
+          <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">Explorar Raquetas</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">{DATA_DISCLAIMER}</p>
 
           <div className="mt-10 grid gap-8 lg:grid-cols-[280px_1fr]">
@@ -118,11 +131,11 @@ function Explore() {
                 <Input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder="Search rackets…"
+                  placeholder="Buscar raquetas…"
                   className="h-11 pl-9"
                 />
               </div>
-              <FilterGroup label="Brand">
+              <FilterGroup label="Marca">
                 {BRANDS.map((b) => (
                   <Chip
                     key={b}
@@ -133,7 +146,7 @@ function Explore() {
                   </Chip>
                 ))}
               </FilterGroup>
-              <FilterGroup label="Head size">
+              <FilterGroup label="Tamaño de cabeza">
                 {HEAD_SIZES.map((h) => (
                   <Chip
                     key={h}
@@ -144,18 +157,18 @@ function Explore() {
                   </Chip>
                 ))}
               </FilterGroup>
-              <FilterGroup label="Weight">
+              <FilterGroup label="Peso">
                 {WEIGHTS.map((w) => (
                   <Chip
                     key={w}
                     active={weights.includes(w)}
                     onClick={() => toggle(weights, setWeights, w)}
                   >
-                    {w}
+                    {WEIGHT_LABELS[w]}
                   </Chip>
                 ))}
               </FilterGroup>
-              <FilterGroup label="String pattern">
+              <FilterGroup label="Patrón de encordado">
                 {PATTERNS.map((p) => (
                   <Chip
                     key={p}
@@ -166,26 +179,26 @@ function Explore() {
                   </Chip>
                 ))}
               </FilterGroup>
-              <RangeFilter label="Min power" value={minPower} onChange={setMinPower} />
-              <RangeFilter label="Min control" value={minControl} onChange={setMinControl} />
-              <RangeFilter label="Min spin" value={minSpin} onChange={setMinSpin} />
+              <RangeFilter label="Potencia mínima" value={minPower} onChange={setMinPower} />
+              <RangeFilter label="Control mínimo" value={minControl} onChange={setMinControl} />
+              <RangeFilter label="Efecto mínimo" value={minSpin} onChange={setMinSpin} />
               <div>
                 <div className="mb-2 flex justify-between text-sm">
-                  <span className="text-muted-foreground">Max price</span>
-                  <span className="font-semibold">${maxPrice}</span>
+                  <span className="text-muted-foreground">Precio máximo</span>
+                  <span className="font-semibold">{formatMXN(maxPriceUsd)}</span>
                 </div>
                 <Slider
-                  min={150}
-                  max={300}
-                  step={10}
-                  value={[maxPrice]}
-                  onValueChange={(v) => setMaxPrice(v[0] ?? 300)}
+                  min={MAX_PRICE_MIN_MXN}
+                  max={MAX_PRICE_MAX_MXN}
+                  step={250}
+                  value={[maxPriceMxn]}
+                  onValueChange={(v) => setMaxPriceMxn(v[0] ?? MAX_PRICE_MAX_MXN)}
                 />
               </div>
             </aside>
 
             <div>
-              <p className="text-sm text-muted-foreground">{results.length} rackets</p>
+              <p className="text-sm text-muted-foreground">{results.length} raquetas</p>
               <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {results.map((r) => (
                   <Link
@@ -203,25 +216,25 @@ function Explore() {
                       <span className="eyebrow">{r.brand}</span>
                       <h2 className="text-display mt-2 text-xl font-extrabold">{r.model}</h2>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {r.head_size} sq in · {r.weight}g · {r.string_pattern} · {r.swingweight} SW
+                        {r.head_size} pulg² · {r.weight}g · {r.string_pattern} · {r.swingweight} SW
                       </p>
                       <p className="mt-3 flex-1 text-sm text-muted-foreground">{r.description}</p>
                       <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
                         <span className="rounded-full bg-secondary px-2.5 py-1">
-                          Power {r.power_score}
+                          Potencia {r.power_score}
                         </span>
                         <span className="rounded-full bg-secondary px-2.5 py-1">
                           Control {r.control_score}
                         </span>
                         <span className="rounded-full bg-secondary px-2.5 py-1">
-                          Spin {r.spin_score}
+                          Efecto {r.spin_score}
                         </span>
                       </div>
                     </div>
                   </Link>
                 ))}
                 {!results.length && (
-                  <p className="text-muted-foreground">No rackets match those filters.</p>
+                  <p className="text-muted-foreground">Ninguna raqueta coincide con esos filtros.</p>
                 )}
               </div>
             </div>

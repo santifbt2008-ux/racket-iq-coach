@@ -77,7 +77,7 @@ export interface Racket extends RacketSeed {
 }
 
 export const DATA_DISCLAIMER =
-  "Sample data — specifications are approximate demo values, not verified manufacturer specs.";
+  "Datos de muestra: las especificaciones son valores de demostración aproximados, no especificaciones verificadas del fabricante.";
 
 const RACKET_SEED: RacketSeed[] = [
   {
@@ -103,7 +103,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["intermediate", "advanced", "tournament"],
     price: 259,
     description:
-      "Spin-oriented control frame for players who swing fast and want heavy, dipping shots without giving up plow-through.",
+      "Marco de control orientado al efecto para jugadores con swing rápido que buscan golpes pesados y con caída sin sacrificar penetración.",
   },
   {
     id: "yonex-vcore-100",
@@ -128,7 +128,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["intermediate", "advanced"],
     price: 259,
     description:
-      "Free-swinging spin frame with an accessible weight and a livelier response than the 98.",
+      "Marco de efecto de swing libre con un peso accesible y una respuesta más viva que el 98.",
   },
   {
     id: "yonex-ezone-98",
@@ -153,7 +153,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["intermediate", "advanced", "tournament"],
     price: 279,
     description:
-      "Comfortable all-court frame with a large sweet spot and easy depth for its head size.",
+      "Marco de todo tipo de superficie cómodo, con un punto dulce amplio y profundidad fácil para su tamaño de cabeza.",
   },
   {
     id: "yonex-ezone-100",
@@ -178,7 +178,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["beginner", "intermediate", "advanced"],
     price: 279,
     description:
-      "Forgiving, comfortable power frame that suits improving players and shorter swings.",
+      "Marco de potencia tolerante y cómodo, adecuado para jugadores en desarrollo y swings más cortos.",
   },
   {
     id: "yonex-percept-97",
@@ -203,7 +203,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["advanced", "tournament"],
     price: 269,
     description:
-      "Flexible, feel-oriented control frame that rewards long, committed swings and touch at net.",
+      "Marco de control flexible y sensible que recompensa swings largos y comprometidos, además de buen toque en la red.",
   },
   {
     id: "babolat-pure-aero-98",
@@ -228,7 +228,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["advanced", "tournament"],
     price: 269,
     description:
-      "Tighter-patterned Aero built for heavy, controlled spin from aggressive baseliners.",
+      "Aero con patrón más cerrado, diseñado para efecto pesado y controlado desde el fondo por jugadores agresivos.",
   },
   {
     id: "babolat-pure-aero-100",
@@ -253,7 +253,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["intermediate", "advanced", "tournament"],
     price: 279,
     description:
-      "The benchmark spin-and-power frame — huge racket-head speed and a very lively response.",
+      "El marco de referencia en efecto y potencia: enorme velocidad de cabeza y una respuesta muy viva.",
   },
   {
     id: "babolat-pure-drive",
@@ -277,7 +277,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner", "all-court"],
     recommended_level: ["beginner", "intermediate", "advanced"],
     price: 279,
-    description: "Explosive power and easy free depth, especially on serve.",
+    description: "Potencia explosiva y profundidad fácil, especialmente en el saque.",
   },
   {
     id: "babolat-pure-strike-98-16x19",
@@ -301,7 +301,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner", "all-court"],
     recommended_level: ["advanced", "tournament"],
     price: 269,
-    description: "Crisp, precise frame with a clean feel and strong directional control.",
+    description: "Marco nítido y preciso con una sensación limpia y fuerte control direccional.",
   },
   {
     id: "babolat-pure-strike-98-18x20",
@@ -325,7 +325,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["advanced", "tournament"],
     price: 269,
-    description: "Flat-hitter's control stick with a tight pattern and very predictable launch.",
+    description: "Marco de control para golpes planos, con patrón cerrado y una salida de bola muy predecible.",
   },
   {
     id: "wilson-blade-98-16x19",
@@ -349,7 +349,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "aggressive-baseliner", "counterpuncher"],
     recommended_level: ["advanced", "tournament"],
     price: 269,
-    description: "Flexible box-beam control frame with plush feel and reliable spin.",
+    description: "Marco de control de perfil recto y flexible, con sensación mullida y efecto confiable.",
   },
   {
     id: "wilson-blade-98-18x20",
@@ -373,7 +373,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["advanced", "tournament"],
     price: 269,
-    description: "Dense-pattern Blade for precision hitters who supply their own power.",
+    description: "Blade de patrón denso para jugadores de precisión que generan su propia potencia.",
   },
   {
     id: "wilson-blade-100",
@@ -397,7 +397,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "counterpuncher"],
     recommended_level: ["intermediate", "advanced"],
     price: 259,
-    description: "Slightly more forgiving Blade with an easier launch angle and quick handling.",
+    description: "Blade ligeramente más tolerante, con un ángulo de salida más fácil y manejo rápido.",
   },
   {
     id: "wilson-pro-staff-97",
@@ -421,7 +421,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["advanced", "tournament"],
     price: 279,
-    description: "Heavy, stable, low-powered precision frame for strong, compact swings.",
+    description: "Marco de precisión pesado, estable y de baja potencia, para swings fuertes y compactos.",
   },
   {
     id: "wilson-clash-100",
@@ -445,7 +445,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "counterpuncher", "defensive"],
     recommended_level: ["beginner", "intermediate", "advanced"],
     price: 259,
-    description: "Exceptionally flexible and arm-friendly frame with a soft, forgiving response.",
+    description: "Marco excepcionalmente flexible y amigable con el brazo, con una respuesta suave y tolerante.",
   },
   {
     id: "wilson-ultra-100",
@@ -469,7 +469,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["beginner", "intermediate", "advanced"],
     price: 249,
-    description: "Powerful, easy-depth frame that rewards shorter swings and net play.",
+    description: "Marco potente y de profundidad fácil que favorece swings más cortos y el juego en la red.",
   },
   {
     id: "head-speed-mp",
@@ -493,7 +493,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "aggressive-baseliner", "counterpuncher"],
     recommended_level: ["intermediate", "advanced", "tournament"],
     price: 269,
-    description: "Fast-handling all-court frame that balances control, spin and easy swing speed.",
+    description: "Marco de todo tipo de superficie con manejo rápido que equilibra control, efecto y velocidad de swing.",
   },
   {
     id: "head-speed-pro",
@@ -517,7 +517,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "aggressive-baseliner"],
     recommended_level: ["advanced", "tournament"],
     price: 279,
-    description: "Dense-pattern player's frame combining a 100 head with tight, flat control.",
+    description: "Marco de jugador con patrón denso que combina una cabeza de 100 con control cerrado y plano.",
   },
   {
     id: "head-radical-mp",
@@ -541,7 +541,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "counterpuncher"],
     recommended_level: ["intermediate", "advanced"],
     price: 249,
-    description: "Balanced, versatile frame that does most things well without extremes.",
+    description: "Marco equilibrado y versátil que hace bien la mayoría de las cosas sin extremos.",
   },
   {
     id: "head-prestige-mp",
@@ -565,7 +565,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["advanced", "tournament"],
     price: 269,
-    description: "Traditional heavy control frame with deep feel and huge stability.",
+    description: "Marco de control tradicional y pesado, con sensación profunda y gran estabilidad.",
   },
   {
     id: "head-extreme-mp",
@@ -589,7 +589,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner", "all-court"],
     recommended_level: ["intermediate", "advanced"],
     price: 249,
-    description: "Spin-friendly frame with a high launch angle and modern baseline feel.",
+    description: "Marco amigable con el efecto, ángulo de salida alto y sensación moderna de fondo de pista.",
   },
   {
     id: "head-boom-mp",
@@ -613,7 +613,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "counterpuncher", "defensive"],
     recommended_level: ["beginner", "intermediate", "advanced"],
     price: 239,
-    description: "Light, comfortable and quick — easy power with a soft response.",
+    description: "Ligero, cómodo y rápido: potencia fácil con una respuesta suave.",
   },
   {
     id: "tecnifibre-tf40-305",
@@ -637,7 +637,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["advanced", "tournament"],
     price: 249,
-    description: "Precision-first frame with a comfortable, connected feel on flat drives.",
+    description: "Marco enfocado en la precisión, con una sensación cómoda y conectada en golpes planos.",
   },
   {
     id: "tecnifibre-tfight-300-isoflex",
@@ -661,7 +661,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner", "all-court"],
     recommended_level: ["intermediate", "advanced"],
     price: 239,
-    description: "Modern player's frame with a flexible throat and lively but controlled response.",
+    description: "Marco moderno de jugador con garganta flexible y una respuesta viva pero controlada.",
   },
   {
     id: "prince-phantom-100x-18x20",
@@ -685,7 +685,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["advanced", "tournament"],
     price: 229,
-    description: "Very flexible thin-beam frame with exceptional comfort and touch.",
+    description: "Marco de perfil delgado muy flexible, con comodidad y toque excepcionales.",
   },
   {
     id: "dunlop-cx-200",
@@ -709,7 +709,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley", "aggressive-baseliner"],
     recommended_level: ["advanced", "tournament"],
     price: 229,
-    description: "Control-oriented frame with a clean, muted feel and dependable placement.",
+    description: "Marco orientado al control, con sensación limpia y apagada y colocación confiable.",
   },
   {
     id: "dunlop-fx-500",
@@ -733,7 +733,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner", "all-court"],
     recommended_level: ["intermediate", "advanced"],
     price: 219,
-    description: "Fast, powerful frame with easy depth and a big sweet spot.",
+    description: "Marco rápido y potente con profundidad fácil y un punto dulce amplio.",
   },
   {
     id: "yonex-ezone-102",
@@ -757,7 +757,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["defensive", "counterpuncher", "all-court"],
     recommended_level: ["beginner", "intermediate"],
     price: 269,
-    description: "Oversize, light and forgiving — maximum sweet spot and easy swing speed.",
+    description: "Sobretamaño, ligero y tolerante: máximo punto dulce y velocidad de swing fácil.",
   },
   {
     id: "babolat-pure-aero-plus",
@@ -781,7 +781,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner"],
     recommended_level: ["advanced", "tournament"],
     price: 289,
-    description: "Extended-length spin monster for big, looping swings and heavy serves.",
+    description: "Monstruo del efecto de largo extendido para swings grandes y curvos, y saques pesados.",
   },
   {
     id: "wilson-shift-99",
@@ -805,7 +805,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner", "counterpuncher"],
     recommended_level: ["advanced", "tournament"],
     price: 269,
-    description: "Whippy, flexible frame designed for extreme grips and heavy topspin.",
+    description: "Marco flexible y con lengüetazo, diseñado para empuñaduras extremas y topspin pesado.",
   },
   {
     id: "head-gravity-mp",
@@ -829,7 +829,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "counterpuncher", "defensive"],
     recommended_level: ["intermediate", "advanced", "tournament"],
     price: 259,
-    description: "Comfort-oriented control frame with a large, soft sweet spot.",
+    description: "Marco de control orientado a la comodidad, con un punto dulce amplio y suave.",
   },
   {
     id: "yonex-vcore-95",
@@ -853,7 +853,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["aggressive-baseliner", "all-court"],
     recommended_level: ["advanced", "tournament"],
     price: 259,
-    description: "Small-headed spin-control frame for advanced players with full swings.",
+    description: "Marco de cabeza pequeña con control de efecto para jugadores avanzados con swings completos.",
   },
   {
     id: "wilson-pro-staff-x-100",
@@ -878,7 +878,7 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_level: ["advanced", "tournament"],
     price: 279,
     description:
-      "Heavier 100 sq in control frame — stability of a player's stick, bigger sweet spot.",
+      "Marco de control más pesado de 100 pulg²: estabilidad de un marco de jugador con un punto dulce más grande.",
   },
 ];
 

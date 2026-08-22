@@ -4,10 +4,10 @@ import { DATA_DISCLAIMER } from "@/data/rackets";
 import type { RacketImage } from "@/data/racket-media";
 
 const nav = [
-  { to: "/find-my-racket", label: "Find My Racket" },
-  { to: "/catalog", label: "Catalog" },
-  { to: "/explore", label: "Explore Rackets" },
-  { to: "/compare", label: "Compare" },
+  { to: "/find-my-racket", label: "Encuentra tu raqueta" },
+  { to: "/catalog", label: "Catálogo" },
+  { to: "/explore", label: "Explorar raquetas" },
+  { to: "/compare", label: "Comparar" },
 ] as const;
 
 export function SiteHeader() {
@@ -36,7 +36,7 @@ export function SiteHeader() {
           to="/find-my-racket"
           className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
-          Find My Racket
+          Encuentra tu raqueta
         </Link>
       </div>
     </header>
@@ -79,7 +79,7 @@ export function RacketVisual({
       <figure
         className={`relative grid place-items-center overflow-hidden rounded-2xl border border-border bg-surface-strong ${className}`}
       >
-        <img src={image.url} alt={`${label} tennis racket`} loading="lazy" className="h-full w-full object-contain p-6" />
+        <img src={image.url} alt={`Raqueta de tenis ${label}`} loading="lazy" className="h-full w-full object-contain p-6" />
         <figcaption className="absolute bottom-2 text-[10px] uppercase tracking-widest text-muted-foreground">
           {image.credit}
         </figcaption>
@@ -91,7 +91,7 @@ export function RacketVisual({
     <div
       className={`court-grid relative grid place-items-center overflow-hidden rounded-2xl border border-border bg-surface-strong ${className}`}
       role="img"
-      aria-label={`${label} racket illustration placeholder`}
+      aria-label={`Ilustración de marcador de posición de la raqueta ${label}`}
     >
       <svg viewBox="0 0 120 260" className="h-full max-h-72 w-auto py-6 opacity-90">
         <g fill="none" stroke="currentColor" className="text-primary" strokeWidth="4">
@@ -109,7 +109,7 @@ export function RacketVisual({
         </g>
       </svg>
       <span className="absolute bottom-3 text-[10px] uppercase tracking-widest text-muted-foreground">
-        Image placeholder
+        Imagen de marcador de posición
       </span>
     </div>
   );

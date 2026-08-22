@@ -43,34 +43,34 @@ export const STROKE_STYLES = [
 ] as const;
 
 export const STROKE_LABELS: Record<string, string> = {
-  "aggressive-baseliner": "Aggressive baseliner",
-  "all-court": "All-court",
-  counterpuncher: "Counterpuncher",
-  "serve-volley": "Serve & volley",
-  defensive: "Defensive",
+  "aggressive-baseliner": "Golpeador agresivo de fondo",
+  "all-court": "Todo tipo de cancha",
+  counterpuncher: "Contragolpeador",
+  "serve-volley": "Saque y volea",
+  defensive: "Defensivo",
 };
 
 export const WEIGHT_BANDS = [
-  { label: "Under 285g", min: 0, max: 284.99 },
+  { label: "Menos de 285g", min: 0, max: 284.99 },
   { label: "285–299g", min: 285, max: 299.99 },
   { label: "300–309g", min: 300, max: 309.99 },
-  { label: "310g+", min: 310, max: 9999 },
+  { label: "310g o más", min: 310, max: 9999 },
 ] as const;
 
 export const HEAD_BANDS = [
-  { label: "Under 98", min: 0, max: 97.99 },
+  { label: "Menos de 98", min: 0, max: 97.99 },
   { label: "98–99", min: 98, max: 99.99 },
   { label: "100–101", min: 100, max: 101.99 },
-  { label: "102+", min: 102, max: 9999 },
+  { label: "102 o más", min: 102, max: 9999 },
 ] as const;
 
 export const SORTS = [
-  { value: "brand", label: "Brand A–Z" },
-  { value: "newest", label: "Newest" },
-  { value: "price-asc", label: "Price: low to high" },
-  { value: "price-desc", label: "Price: high to low" },
-  { value: "weight-asc", label: "Weight: light to heavy" },
-  { value: "weight-desc", label: "Weight: heavy to light" },
+  { value: "brand", label: "Marca A–Z" },
+  { value: "newest", label: "Más recientes" },
+  { value: "price-asc", label: "Precio: de menor a mayor" },
+  { value: "price-desc", label: "Precio: de mayor a menor" },
+  { value: "weight-asc", label: "Peso: de ligero a pesado" },
+  { value: "weight-desc", label: "Peso: de pesado a ligero" },
 ] as const;
 
 export type SortValue = (typeof SORTS)[number]["value"];
@@ -106,4 +106,4 @@ export function slugify(input: string) {
 }
 
 export const CATALOG_DISCLAIMER =
-  "Specifications are indicative reference values maintained in our own database. Product photography is only shown when we hold a documented licence.";
+  "Las especificaciones son valores de referencia indicativos que mantenemos en nuestra propia base de datos. Las fotografías de producto solo se muestran cuando contamos con una licencia documentada.";
