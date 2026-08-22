@@ -544,12 +544,19 @@ export function compareForPlayer(profile: PlayerProfile, rackets: Racket[]) {
   const scored = rackets.map((r) => scoreRacket(profile, r)).sort((a, b) => b.overall - a.overall);
   if (!scored.length) return null;
   const best = scored[0]!;
+  const dimLabelsEs: Record<string, string> = {
+    spin: "efecto",
+    control: "control",
+    power: "potencia",
+    stability: "estabilidad",
+    maneuverability: "maniobrabilidad",
+  };
   const lines = scored.slice(1).map((m) => {
     const diffs: string[] = [];
     for (const key of ["spin", "control", "power", "stability", "maneuverability"] as const) {
       const a = best.dimensions.find((d) => d.key === key)!.score;
       const b = m.dimensions.find((d) => d.key === key)!.score;
-      if (a - b >= 8) diffs.push(`${key} (+${a - b} pts)`);
+      if (a - b >= 8) diffs.push(`${dimLabelsEs[key]} (+${a - b} pts)`);
     }
     return `${racketName(best.racket)} supera a ${racketName(m.racket)} por ${best.overall - m.overall} puntos en general${
       diffs.length ? `, principalmente en ${diffs.join(", ")}` : ""
