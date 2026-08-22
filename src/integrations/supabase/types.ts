@@ -17,80 +17,143 @@ export type Database = {
       rackets: {
         Row: {
           balance: number | null
+          balance_points: number | null
           beam_width: string | null
           brand: string
+          comfort_level: string | null
           composition: string | null
+          control_level: string | null
           created_at: string
+          crosses: number | null
           description: string | null
+          generation: string | null
+          grip_sizes: string | null
           head_size: number | null
+          head_size_cm2: number | null
           id: string
           image_url: string | null
+          incomplete_data: boolean
           is_current: boolean
           length: number | null
+          mains: number | null
+          maneuverability: string | null
+          manufacturer_url: string | null
           model: string
           power_level: string | null
           price: number | null
           product_url: string | null
           racket_type: string | null
+          recommended_play_style: string | null
+          recommended_player_level: string | null
+          recommended_tension: string | null
           slug: string
+          source_url: string | null
+          source_verified: boolean
+          spin_level: string | null
+          status: string
           stiffness: number | null
           string_pattern: string | null
           stroke_style: string | null
           swing_speed: string | null
           swingweight: number | null
+          updated_at: string
           weight: number | null
+          weight_strung: number | null
+          weight_unstrung: number | null
           year: number | null
         }
         Insert: {
           balance?: number | null
+          balance_points?: number | null
           beam_width?: string | null
           brand: string
+          comfort_level?: string | null
           composition?: string | null
+          control_level?: string | null
           created_at?: string
+          crosses?: number | null
           description?: string | null
+          generation?: string | null
+          grip_sizes?: string | null
           head_size?: number | null
+          head_size_cm2?: number | null
           id?: string
           image_url?: string | null
+          incomplete_data?: boolean
           is_current?: boolean
           length?: number | null
+          mains?: number | null
+          maneuverability?: string | null
+          manufacturer_url?: string | null
           model: string
           power_level?: string | null
           price?: number | null
           product_url?: string | null
           racket_type?: string | null
+          recommended_play_style?: string | null
+          recommended_player_level?: string | null
+          recommended_tension?: string | null
           slug: string
+          source_url?: string | null
+          source_verified?: boolean
+          spin_level?: string | null
+          status?: string
           stiffness?: number | null
           string_pattern?: string | null
           stroke_style?: string | null
           swing_speed?: string | null
           swingweight?: number | null
+          updated_at?: string
           weight?: number | null
+          weight_strung?: number | null
+          weight_unstrung?: number | null
           year?: number | null
         }
         Update: {
           balance?: number | null
+          balance_points?: number | null
           beam_width?: string | null
           brand?: string
+          comfort_level?: string | null
           composition?: string | null
+          control_level?: string | null
           created_at?: string
+          crosses?: number | null
           description?: string | null
+          generation?: string | null
+          grip_sizes?: string | null
           head_size?: number | null
+          head_size_cm2?: number | null
           id?: string
           image_url?: string | null
+          incomplete_data?: boolean
           is_current?: boolean
           length?: number | null
+          mains?: number | null
+          maneuverability?: string | null
+          manufacturer_url?: string | null
           model?: string
           power_level?: string | null
           price?: number | null
           product_url?: string | null
           racket_type?: string | null
+          recommended_play_style?: string | null
+          recommended_player_level?: string | null
+          recommended_tension?: string | null
           slug?: string
+          source_url?: string | null
+          source_verified?: boolean
+          spin_level?: string | null
+          status?: string
           stiffness?: number | null
           string_pattern?: string | null
           stroke_style?: string | null
           swing_speed?: string | null
           swingweight?: number | null
+          updated_at?: string
           weight?: number | null
+          weight_strung?: number | null
+          weight_unstrung?: number | null
           year?: number | null
         }
         Relationships: []
