@@ -279,57 +279,57 @@ function buildReasons(profile: PlayerProfile, m: MatchResult): string[] {
 
   if (profile.spin >= 7 && r.spin_score >= 8) {
     reasons.push(
-      `You rated spin ${profile.spin}/10${profile.forehand === "heavy" ? " and hit a heavy topspin forehand" : ""}, and this frame's ${r.string_pattern} pattern and ${r.spin_score}/10 spin rating are built for that swing.`,
+      `Calificaste el efecto en ${profile.spin}/10${profile.forehand === "heavy" ? " y golpeas una derecha con mucho topspin" : ""}, y el patrón ${r.string_pattern} y la calificación de efecto de ${r.spin_score}/10 de esta raqueta están hechos para ese swing.`,
     );
   }
   if (profile.control >= 7 && r.control_score >= 8) {
     reasons.push(
-      `Your control priority of ${profile.control}/10 makes the ${r.head_size} sq. in. head and ${r.control_score}/10 control rating a better fit than a larger, more power-oriented frame.`,
+      `Tu prioridad de control de ${profile.control}/10 hace que la cabeza de ${r.head_size} sq. in. y la calificación de control de ${r.control_score}/10 sean una mejor opción que un marco más grande y orientado a la potencia.`,
     );
   }
   if (profile.power >= 7 && r.power_score >= 8) {
     reasons.push(
-      `You asked for power (${profile.power}/10); at ${r.stiffness} RA with a ${r.beam} beam this frame gives free depth without you having to over-swing.`,
+      `Pediste potencia (${profile.power}/10); con ${r.stiffness} RA y un aro de ${r.beam} este marco te da profundidad gratuita sin que tengas que forzar el swing.`,
     );
   }
   if (profile.stability >= 7 && r.stability_score >= 8) {
     reasons.push(
-      `Its ${r.weight}g strung weight and ${r.swingweight} swingweight provide the stability you asked for (${profile.stability}/10) while keeping maneuverability at ${r.maneuverability_score}/10.`,
+      `Su peso encordado de ${r.weight}g y su swingweight de ${r.swingweight} ofrecen la estabilidad que pediste (${profile.stability}/10) mientras mantienen la maniobrabilidad en ${r.maneuverability_score}/10.`,
     );
   }
   if (profile.maneuverability >= 7 && r.maneuverability_score >= 7) {
     reasons.push(
-      `With maneuverability rated ${profile.maneuverability}/10 by you, the ${r.swingweight} swingweight stays quick enough for fast exchanges and defensive resets.`,
+      `Con una maniobrabilidad que calificaste en ${profile.maneuverability}/10, el swingweight de ${r.swingweight} se mantiene lo bastante ágil para intercambios rápidos y recuperaciones defensivas.`,
     );
   }
   const matchedStyle = profile.styles.find((s) => r.recommended_player_types.includes(s));
   if (matchedStyle) {
     reasons.push(
-      `It is a natural fit for your ${STYLE_LABELS[matchedStyle].toLowerCase()} game — the frame is designed around exactly that pattern of play.`,
+      `Encaja naturalmente con tu juego de ${STYLE_LABELS[matchedStyle].toLowerCase()} — el marco está diseñado justo para ese patrón de juego.`,
     );
   }
   if (profile.improvements.includes("comfort") && r.comfort_score >= 8) {
     reasons.push(
-      `You want more comfort: at ${r.stiffness} RA this is one of the softer frames in the database (${r.comfort_score}/10 comfort).`,
+      `Quieres más comodidad: con ${r.stiffness} RA este es uno de los marcos más suaves de la base de datos (${r.comfort_score}/10 en comodidad).`,
     );
   }
   if (profile.improvements.includes("serve") && r.power_score >= 7) {
     reasons.push(
-      `For the better serve you asked for, its ${r.power_score}/10 power and ${r.swingweight} swingweight help generate racket-head speed and free pace.`,
+      `Para el mejor saque que pediste, su potencia de ${r.power_score}/10 y su swingweight de ${r.swingweight} ayudan a generar velocidad de cabeza y ritmo gratuito.`,
     );
   }
   if (profile.currentRacketId) {
     const cur = RACKETS.find((x) => x.id === profile.currentRacketId);
     if (cur && cur.id !== r.id) {
       const deltas: string[] = [];
-      if (r.spin_score > cur.spin_score) deltas.push("more spin");
-      if (r.control_score > cur.control_score) deltas.push("more control");
-      if (r.power_score > cur.power_score) deltas.push("more power");
-      if (r.stability_score > cur.stability_score) deltas.push("more stability");
-      if (r.comfort_score > cur.comfort_score) deltas.push("more comfort");
+      if (r.spin_score > cur.spin_score) deltas.push("más efecto");
+      if (r.control_score > cur.control_score) deltas.push("más control");
+      if (r.power_score > cur.power_score) deltas.push("más potencia");
+      if (r.stability_score > cur.stability_score) deltas.push("más estabilidad");
+      if (r.comfort_score > cur.comfort_score) deltas.push("más comodidad");
       if (deltas.length) {
         reasons.push(
-          `Compared with your ${racketName(cur)}, our sample specs rate this frame higher for ${deltas.slice(0, 3).join(", ")}.`,
+          `Comparado con tu ${racketName(cur)}, nuestros datos de muestra califican este marco mejor en ${deltas.slice(0, 3).join(", ")}.`,
         );
       }
     }
@@ -338,14 +338,14 @@ function buildReasons(profile: PlayerProfile, m: MatchResult): string[] {
     const issues = profile.dislikes
       .map((d) => DISLIKE_LABELS[d].toLowerCase())
       .slice(0, 2)
-      .join(" and ");
+      .join(" y ");
     reasons.push(
-      `You flagged ${issues} on your current racket — this frame scores ${Math.round(m.overall)}% against your profile overall, with its strongest fit in ${strongestDims(m).join(" and ")}.`,
+      `Marcaste ${issues} en tu raqueta actual — este marco obtiene ${Math.round(m.overall)}% en general contra tu perfil, con su mejor ajuste en ${strongestDims(m).join(" y ")}.`,
     );
   }
   if (reasons.length < 3) {
     reasons.push(
-      `Across your weighted priorities it scores ${dim("spin")}% on spin, ${dim("control")}% on control and ${dim("stability")}% on stability against the targets you set.`,
+      `Según tus prioridades ponderadas, obtiene ${dim("spin")}% en efecto, ${dim("control")}% en control y ${dim("stability")}% en estabilidad frente a los objetivos que definiste.`,
     );
   }
   return reasons.slice(0, 5);
@@ -411,12 +411,12 @@ export function recommendString(profile: PlayerProfile, r: Racket): StringSetup 
   const hi = Math.round(clamp(centre + 2, 40, 64));
 
   const notes = [
-    "Start in the middle of the range and adjust ±2 lbs based on how the ball is launching.",
-    "Polyester loses tension quickly — plan to restring roughly as often per year as you play per week.",
+    "Comienza a la mitad del rango y ajusta ±2 lbs según cómo esté saliendo la pelota.",
+    "El poliéster pierde tensión rápido — planea reencordar aproximadamente tantas veces al año como sesiones juegues por semana.",
   ];
   if (wantsComfort)
     notes.push(
-      "If you have any arm sensitivity, string at the lower end of the range or move to a softer setup.",
+      "Si tienes sensibilidad en el brazo, encorda en el extremo inferior del rango o cambia a una configuración más suave.",
     );
 
   return {
@@ -424,7 +424,7 @@ export function recommendString(profile: PlayerProfile, r: Racket): StringSetup 
     type,
     gauge,
     tension: `${lo}–${hi} lbs`,
-    rationale: `Recommended because you rated control ${control}/10, spin ${spin}/10 and power ${power}/10, and the ${racketName(r)} is a ${r.power_score >= 8 ? "higher-powered" : r.power_score <= 6 ? "lower-powered" : "medium-powered"} frame (${r.power_score}/10 power in our sample data). ${poly ? "A polyester bed keeps the ball in when you swing fast" : "A softer string adds response and comfort"} while the tension range keeps launch predictable.`,
+    rationale: `Recomendado porque calificaste el control en ${control}/10, el efecto en ${spin}/10 y la potencia en ${power}/10, y la ${racketName(r)} es un marco ${r.power_score >= 8 ? "de mayor potencia" : r.power_score <= 6 ? "de menor potencia" : "de potencia media"} (${r.power_score}/10 en potencia en nuestros datos de muestra). ${poly ? "Un encordado de poliéster mantiene la pelota dentro cuando le pegas fuerte" : "Un encordado más suave añade respuesta y comodidad"} mientras que el rango de tensión mantiene la salida de bola predecible.`,
     notes,
   };
 }
@@ -455,21 +455,21 @@ export function recommendGrip(profile: PlayerProfile): GripSetup {
   let rationale: string;
 
   if (size) {
-    rationale = `Based on the grip size you told us you use (${GRIP_LABELS[size] ?? size}).`;
+    rationale = `Basado en el tamaño de grip que nos dijiste que usas (${GRIP_LABELS[size] ?? size}).`;
   } else {
     // Fallback default — most adult players land on 4⅜"; this is a starting point only.
     size = "4_3_8";
     rationale =
-      "We don't have your measured grip size, so this defaults to the most common adult size (4⅜\"). A too-small grip increases wrist/arm strain; a too-big grip restricts spin — have a shop bump it up with a heat-shrink sleeve if it feels off rather than guessing further.";
+      "No tenemos tu tamaño de grip medido, así que por defecto usamos el tamaño más común para adultos (4⅜\"). Un grip muy pequeño aumenta la tensión en muñeca/brazo; uno muy grande limita el efecto — pide en una tienda que lo agranden con una funda termoencogible si se siente incómodo, en lugar de seguir adivinando.";
   }
 
   const wantsSpin = profile.spin >= 7 || profile.improvements.includes("spin");
   const overgrip = wantsSpin
-    ? "Tacky, thin overgrip (e.g. Tourna Grip or Yonex Super Grap) — replaced every 1–2 weeks"
-    : "Cushioned, absorbent overgrip — replaced every 2–4 weeks";
+    ? "Overgrip delgado y adherente (p. ej. Tourna Grip o Yonex Super Grap) — cámbialo cada 1–2 semanas"
+    : "Overgrip acolchado y absorbente — cámbialo cada 2–4 semanas";
   const dampener = profile.improvements.includes("feel")
-    ? "Optional silicone dampener for a softer sound/feel — has no effect on power, spin or control"
-    : "Optional — comes down to preference, not performance";
+    ? "Amortiguador de silicón opcional para un sonido/sensación más suave — no afecta la potencia, el efecto ni el control"
+    : "Opcional — es cuestión de preferencia, no de rendimiento";
 
   return {
     size: GRIP_LABELS[size] ?? size,
@@ -494,46 +494,46 @@ export function recommendCustomization(
 
   if (profile.stability >= 8 && r.stability_score <= 7) {
     suggestions.push({
-      item: "Lead tape at 3 and 9 o'clock (2–4 g total)",
-      goal: "Increase stability and twistweight without significantly reducing maneuverability.",
+      item: "Cinta de plomo en las 3 y las 9 (2–4 g en total)",
+      goal: "Aumentar la estabilidad y el twistweight sin reducir mucho la maniobrabilidad.",
     });
   }
   if (profile.improvements.includes("power") && r.power_score <= 6) {
     suggestions.push({
-      item: "Lead tape at 12 o'clock (2 g)",
-      goal: "Add plow-through and depth — expect the frame to feel noticeably more head-heavy.",
+      item: "Cinta de plomo en las 12 (2 g)",
+      goal: "Añadir penetración de golpe y profundidad — espera que el marco se sienta notablemente más cargado hacia la cabeza.",
     });
   }
   if (profile.maneuverability >= 8 && r.maneuverability_score <= 6) {
     suggestions.push({
-      item: "Add 3–5 g in the handle (silicone or lead under the grip)",
-      goal: "Keep total mass for stability while shifting balance back for quicker handling.",
+      item: "Añadir 3–5 g en el mango (silicón o plomo debajo del grip)",
+      goal: "Mantener la masa total para estabilidad mientras se desplaza el balance hacia atrás para un manejo más rápido.",
     });
   }
   if (profile.improvements.includes("comfort") && r.stiffness >= 66) {
     suggestions.push({
-      item: "Softer setup + a cushioned replacement grip",
-      goal: "Reduce impact shock on a stiffer frame before considering any weight changes.",
+      item: "Configuración más suave + un grip de repuesto acolchado",
+      goal: "Reducir el impacto en un marco más rígido antes de considerar cambios de peso.",
     });
   }
   if (profile.improvements.includes("feel")) {
     suggestions.push({
-      item: "Vibration dampener (optional)",
-      goal: "Change the sound and perceived feel at contact — it does not change how the frame plays.",
+      item: "Amortiguador de vibración (opcional)",
+      goal: "Cambia el sonido y la sensación percibida en el contacto — no cambia cómo juega el marco.",
     });
   }
 
   if (!suggestions.length) {
     return {
       needed: false,
-      summary: `No customization needed. The ${racketName(r)} already lines up with your stated priorities as it comes from the factory — play it stock for a few sessions before changing anything.`,
+      summary: `No necesita personalización. La ${racketName(r)} ya se alinea con las prioridades que definiste tal como sale de fábrica — juégala de fábrica unas cuantas sesiones antes de cambiar algo.`,
       suggestions: [],
     };
   }
 
   return {
     needed: true,
-    summary: `A small amount of customization would close the remaining gaps between your priorities and this frame's stock specs. Make one change at a time.`,
+    summary: `Una pequeña personalización cerraría las brechas restantes entre tus prioridades y las especificaciones de fábrica de este marco. Haz un cambio a la vez.`,
     suggestions,
   };
 }
@@ -551,8 +551,8 @@ export function compareForPlayer(profile: PlayerProfile, rackets: Racket[]) {
       const b = m.dimensions.find((d) => d.key === key)!.score;
       if (a - b >= 8) diffs.push(`${key} (+${a - b} pts)`);
     }
-    return `${racketName(best.racket)} beats ${racketName(m.racket)} by ${best.overall - m.overall} points overall${
-      diffs.length ? `, mainly on ${diffs.join(", ")}` : ""
+    return `${racketName(best.racket)} supera a ${racketName(m.racket)} por ${best.overall - m.overall} puntos en general${
+      diffs.length ? `, principalmente en ${diffs.join(", ")}` : ""
     }.`;
   });
   return { best, scored, lines };
