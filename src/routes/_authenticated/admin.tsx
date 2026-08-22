@@ -58,7 +58,63 @@ const EMPTY: Draft = {
   is_current: true,
 };
 
-const NUMERIC = new Set(["year", "head_size", "length", "weight", "balance", "swingweight", "stiffness", "price"]);
+const NUMERIC = new Set([
+  "year",
+  "head_size",
+  "length",
+  "weight",
+  "balance",
+  "swingweight",
+  "stiffness",
+  "price",
+  "head_size_cm2",
+  "weight_unstrung",
+  "weight_strung",
+  "balance_points",
+  "mains",
+  "crosses",
+]);
+
+/** Campos extendidos de ficha técnica y trazabilidad de fuente. */
+const EXTRA_FIELDS = [
+  "generation",
+  "head_size_cm2",
+  "weight_unstrung",
+  "weight_strung",
+  "balance_points",
+  "mains",
+  "crosses",
+  "grip_sizes",
+  "recommended_tension",
+  "control_level",
+  "spin_level",
+  "comfort_level",
+  "maneuverability",
+  "recommended_player_level",
+  "recommended_play_style",
+  "manufacturer_url",
+  "source_url",
+] as const;
+
+const EXTRA_LABELS: Record<(typeof EXTRA_FIELDS)[number], string> = {
+  generation: "Generación (v9, 2026…)",
+  head_size_cm2: "Cabeza (cm²)",
+  weight_unstrung: "Peso sin encordar (g)",
+  weight_strung: "Peso encordado (g)",
+  balance_points: "Balance (puntos)",
+  mains: "Verticales (mains)",
+  crosses: "Horizontales (crosses)",
+  grip_sizes: "Medidas de grip",
+  recommended_tension: "Tensión recomendada",
+  control_level: "Nivel de control",
+  spin_level: "Nivel de spin",
+  comfort_level: "Nivel de comodidad",
+  maneuverability: "Maniobrabilidad",
+  recommended_player_level: "Nivel de jugador recomendado",
+  recommended_play_style: "Estilo de juego recomendado",
+  manufacturer_url: "URL del fabricante",
+  source_url: "URL de la fuente",
+};
 
 function toPayload(draft: Draft) {
   const payload: Record<string, unknown> = {
