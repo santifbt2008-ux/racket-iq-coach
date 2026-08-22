@@ -19,6 +19,7 @@ import { Route as ModifyRouteImport } from './routes/modify'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as StringsRouteImport } from './routes/strings'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CatalogIndexRouteImport } from './routes/catalog.index'
 import { Route as CatalogSlugRouteImport } from './routes/catalog.$slug'
@@ -72,6 +73,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/results': typeof ResultsRoute
   '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
   '/catalog/': typeof CatalogIndexRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/results': typeof ResultsRoute
   '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
   '/catalog': typeof CatalogIndexRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/results': typeof ResultsRoute
   '/strings': typeof StringsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
   '/catalog/': typeof CatalogIndexRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/strings'
     | '/admin'
+    | '/audit'
     | '/api/chat'
     | '/catalog/$slug'
     | '/catalog/'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/strings'
     | '/admin'
+    | '/audit'
     | '/api/chat'
     | '/catalog/$slug'
     | '/catalog'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/strings'
     | '/_authenticated/admin'
+    | '/_authenticated/audit'
     | '/api/chat'
     | '/catalog/$slug'
     | '/catalog/'
@@ -265,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/audit': {
+      id: '/_authenticated/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuthenticatedAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -291,10 +310,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAuditRoute: AuthenticatedAuditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
