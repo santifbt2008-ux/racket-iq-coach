@@ -5,21 +5,22 @@ import { Page, RacketVisual, SiteFooter, SiteHeader } from "@/components/site-ch
 import { Input } from "@/components/ui/input";
 import { DATA_DISCLAIMER, RACKETS, getRacket, racketName } from "@/data/rackets";
 import { compareForPlayer } from "@/lib/engine";
+import { formatMXN } from "@/lib/format";
 import { STYLE_LABELS, useStoredProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/compare")({
   head: () => ({
     meta: [
-      { title: "Compare Rackets — side-by-side specs | RacketIQ" },
+      { title: "Comparar Raquetas — especificaciones lado a lado | RacketIQ" },
       {
         name: "description",
         content:
-          "Compare up to three tennis rackets spec by spec and see which one fits your playing profile best.",
+          "Compara hasta tres raquetas de tenis especificación por especificación y descubre cuál se ajusta mejor a tu perfil de juego.",
       },
-      { property: "og:title", content: "Compare Rackets — RacketIQ" },
+      { property: "og:title", content: "Comparar Raquetas — RacketIQ" },
       {
         property: "og:description",
-        content: "Side-by-side racket specifications and a personalized verdict.",
+        content: "Especificaciones de raquetas lado a lado y un veredicto personalizado.",
       },
     ],
   }),
@@ -27,21 +28,22 @@ export const Route = createFileRoute("/compare")({
 });
 
 const ROWS = [
-  ["Head size", (r: (typeof RACKETS)[number]) => `${r.head_size} sq in`],
-  ["Weight", (r: (typeof RACKETS)[number]) => `${r.weight} g`],
+  ["Tamaño de cabeza", (r: (typeof RACKETS)[number]) => `${r.head_size} pulg²`],
+  ["Peso", (r: (typeof RACKETS)[number]) => `${r.weight} g`],
   ["Balance", (r: (typeof RACKETS)[number]) => `${r.balance} cm`],
   ["Swingweight", (r: (typeof RACKETS)[number]) => `${r.swingweight}`],
-  ["String pattern", (r: (typeof RACKETS)[number]) => r.string_pattern],
-  ["Beam", (r: (typeof RACKETS)[number]) => `${r.beam} mm`],
-  ["Stiffness", (r: (typeof RACKETS)[number]) => `${r.stiffness} RA`],
-  ["Power", (r: (typeof RACKETS)[number]) => `${r.power_score}/10`],
+  ["Patrón de encordado", (r: (typeof RACKETS)[number]) => r.string_pattern],
+  ["Aro (grosor)", (r: (typeof RACKETS)[number]) => `${r.beam} mm`],
+  ["Rigidez", (r: (typeof RACKETS)[number]) => `${r.stiffness} RA`],
+  ["Potencia", (r: (typeof RACKETS)[number]) => `${r.power_score}/10`],
   ["Control", (r: (typeof RACKETS)[number]) => `${r.control_score}/10`],
-  ["Spin", (r: (typeof RACKETS)[number]) => `${r.spin_score}/10`],
-  ["Stability", (r: (typeof RACKETS)[number]) => `${r.stability_score}/10`],
-  ["Maneuverability", (r: (typeof RACKETS)[number]) => `${r.maneuverability_score}/10`],
-  ["Forgiveness (est.)", (r: (typeof RACKETS)[number]) => `${r.forgiveness_score}/10`],
+  ["Efecto", (r: (typeof RACKETS)[number]) => `${r.spin_score}/10`],
+  ["Estabilidad", (r: (typeof RACKETS)[number]) => `${r.stability_score}/10`],
+  ["Maniobrabilidad", (r: (typeof RACKETS)[number]) => `${r.maneuverability_score}/10`],
+  ["Tolerancia (est.)", (r: (typeof RACKETS)[number]) => `${r.forgiveness_score}/10`],
+  ["Precio indicativo", (r: (typeof RACKETS)[number]) => formatMXN(r.price)],
   [
-    "Recommended player type",
+    "Tipo de jugador recomendado",
     (r: (typeof RACKETS)[number]) =>
       r.recommended_player_types.map((t) => STYLE_LABELS[t]).join(", "),
   ],
@@ -71,9 +73,9 @@ function Compare() {
       <SiteHeader />
       <main>
         <Page>
-          <p className="eyebrow">Head to head</p>
+          <p className="eyebrow">Cara a cara</p>
           <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">
-            Compare up to 3 rackets
+            Compara hasta 3 raquetas
           </h1>
 
           <div className="mt-8 flex flex-wrap gap-2">
@@ -86,7 +88,7 @@ function Compare() {
                 <button
                   type="button"
                   onClick={() => setIds(ids.filter((x) => x !== r.id))}
-                  aria-label="Remove"
+                  aria-label="Eliminar"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -99,7 +101,7 @@ function Compare() {
               <Input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Search a racket to add…"
+                placeholder="Busca una raqueta para agregar…"
                 className="h-11"
               />
               <div className="mt-4 flex flex-wrap gap-2">
@@ -138,7 +140,7 @@ function Compare() {
               <table className="w-full min-w-[640px] text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="p-4 text-left text-muted-foreground">Spec</th>
+                    <th className="p-4 text-left text-muted-foreground">Especificación</th>
                     {selected.map((r) => (
                       <th
                         key={r.id}
@@ -166,22 +168,22 @@ function Compare() {
           )}
 
           <section className="mt-12">
-            <h2 className="text-display text-3xl font-extrabold">Which one is better for YOU?</h2>
+            <h2 className="text-display text-3xl font-extrabold">¿Cuál es mejor para TI?</h2>
             <div className="panel mt-5 p-6">
               {!profile?.level ? (
                 <p className="text-muted-foreground">
-                  Complete the questionnaire first and RacketIQ will judge these frames against your
-                  own profile.
+                  Completa primero el cuestionario y RacketIQ evaluará estos marcos contra tu
+                  propio perfil.
                 </p>
               ) : selected.length < 2 ? (
                 <p className="text-muted-foreground">
-                  Add at least two rackets to see a personalized verdict.
+                  Agrega al menos dos raquetas para ver un veredicto personalizado.
                 </p>
               ) : (
                 verdict && (
                   <div className="space-y-4">
                     <p className="text-lg">
-                      Best fit for your profile:{" "}
+                      Mejor opción para tu perfil:{" "}
                       <span className="text-display font-extrabold text-primary">
                         {racketName(verdict.best.racket)} ({verdict.best.overall}%)
                       </span>
