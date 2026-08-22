@@ -5,6 +5,7 @@ import type { RacketImage } from "@/data/racket-media";
 
 const nav = [
   { to: "/find-my-racket", label: "Find My Racket" },
+  { to: "/catalog", label: "Catalog" },
   { to: "/explore", label: "Explore Rackets" },
   { to: "/compare", label: "Compare" },
 ] as const;
