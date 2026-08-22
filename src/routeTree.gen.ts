@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as FindMyRacketRouteImport } from './routes/find-my-racket'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as CatalogIndexRouteImport } from './routes/catalog.index'
 import { Route as ExploreIndexRouteImport } from './routes/explore.index'
 import { Route as ExploreRacketIdRouteImport } from './routes/explore.$racketId'
 
@@ -36,6 +37,11 @@ const ResultsRoute = ResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CatalogIndexRoute = CatalogIndexRouteImport.update({
+  id: '/catalog/',
+  path: '/catalog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreIndexRoute = ExploreIndexRouteImport.update({
   id: '/explore/',
   path: '/explore/',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
   '/explore/$racketId': typeof ExploreRacketIdRoute
+  '/catalog/': typeof CatalogIndexRoute
   '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
   '/explore/$racketId': typeof ExploreRacketIdRoute
+  '/catalog': typeof CatalogIndexRoute
   '/explore': typeof ExploreIndexRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
   '/explore/$racketId': typeof ExploreRacketIdRoute
+  '/catalog/': typeof CatalogIndexRoute
   '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/find-my-racket'
     | '/results'
     | '/explore/$racketId'
+    | '/catalog/'
     | '/explore/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/find-my-racket'
     | '/results'
     | '/explore/$racketId'
+    | '/catalog'
     | '/explore'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/find-my-racket'
     | '/results'
     | '/explore/$racketId'
+    | '/catalog/'
     | '/explore/'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   FindMyRacketRoute: typeof FindMyRacketRoute
   ResultsRoute: typeof ResultsRoute
   ExploreRacketIdRoute: typeof ExploreRacketIdRoute
+  CatalogIndexRoute: typeof CatalogIndexRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
 }
 
@@ -138,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/catalog/': {
+      id: '/catalog/'
+      path: '/catalog'
+      fullPath: '/catalog/'
+      preLoaderRoute: typeof CatalogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore/': {
       id: '/explore/'
       path: '/explore'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   FindMyRacketRoute: FindMyRacketRoute,
   ResultsRoute: ResultsRoute,
   ExploreRacketIdRoute: ExploreRacketIdRoute,
+  CatalogIndexRoute: CatalogIndexRoute,
   ExploreIndexRoute: ExploreIndexRoute,
 }
 export const routeTree = rootRouteImport
