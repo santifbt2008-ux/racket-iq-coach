@@ -28,12 +28,58 @@ export interface RacketRow {
   product_url: string | null;
   is_current: boolean;
   created_at: string;
+  // Auditoría / ficha extendida
+  generation: string | null;
+  status: string;
+  head_size_cm2: number | null;
+  weight_unstrung: number | null;
+  weight_strung: number | null;
+  balance_points: number | null;
+  mains: number | null;
+  crosses: number | null;
+  grip_sizes: string | null;
+  recommended_tension: string | null;
+  control_level: string | null;
+  spin_level: string | null;
+  comfort_level: string | null;
+  maneuverability: string | null;
+  recommended_player_level: string | null;
+  recommended_play_style: string | null;
+  manufacturer_url: string | null;
+  source_url: string | null;
+  source_verified: boolean;
+  incomplete_data: boolean;
+  updated_at: string;
 }
+
+/** Especificaciones consideradas "clave" para marcar incomplete_data. */
+export const KEY_SPECS = [
+  "head_size",
+  "weight",
+  "balance",
+  "swingweight",
+  "stiffness",
+  "beam_width",
+  "string_pattern",
+  "composition",
+  "image_url",
+  "source_url",
+] as const;
 
 export const RACKET_TYPES = ["Players", "Tweener", "Game Improvement", "Junior", "Other"] as const;
 export const POWER_LEVELS = ["Low", "Medium", "High"] as const;
 export const SWING_SPEEDS = ["Slow", "Moderate", "Fast"] as const;
-export const STRING_PATTERNS = ["16x19", "18x20", "16x20", "16x18"] as const;
+/** Sugerencias para el admin. Las opciones reales del catálogo salen de la base de datos. */
+export const STRING_PATTERNS = [
+  "16x19",
+  "16x20",
+  "16x18",
+  "18x20",
+  "18x19",
+  "18x16",
+  "16x15",
+  "14x18",
+] as const;
 export const STROKE_STYLES = [
   "aggressive-baseliner",
   "all-court",

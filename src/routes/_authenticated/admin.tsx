@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { formatMXN } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  KEY_SPECS,
   POWER_LEVELS,
   RACKET_TYPES,
   STRING_PATTERNS,
@@ -58,7 +59,63 @@ const EMPTY: Draft = {
   is_current: true,
 };
 
-const NUMERIC = new Set(["year", "head_size", "length", "weight", "balance", "swingweight", "stiffness", "price"]);
+const NUMERIC = new Set([
+  "year",
+  "head_size",
+  "length",
+  "weight",
+  "balance",
+  "swingweight",
+  "stiffness",
+  "price",
+  "head_size_cm2",
+  "weight_unstrung",
+  "weight_strung",
+  "balance_points",
+  "mains",
+  "crosses",
+]);
+
+/** Campos extendidos de ficha técnica y trazabilidad de fuente. */
+const EXTRA_FIELDS = [
+  "generation",
+  "head_size_cm2",
+  "weight_unstrung",
+  "weight_strung",
+  "balance_points",
+  "mains",
+  "crosses",
+  "grip_sizes",
+  "recommended_tension",
+  "control_level",
+  "spin_level",
+  "comfort_level",
+  "maneuverability",
+  "recommended_player_level",
+  "recommended_play_style",
+  "manufacturer_url",
+  "source_url",
+] as const;
+
+const EXTRA_LABELS: Record<(typeof EXTRA_FIELDS)[number], string> = {
+  generation: "Generación (v9, 2026…)",
+  head_size_cm2: "Cabeza (cm²)",
+  weight_unstrung: "Peso sin encordar (g)",
+  weight_strung: "Peso encordado (g)",
+  balance_points: "Balance (puntos)",
+  mains: "Verticales (mains)",
+  crosses: "Horizontales (crosses)",
+  grip_sizes: "Medidas de grip",
+  recommended_tension: "Tensión recomendada",
+  control_level: "Nivel de control",
+  spin_level: "Nivel de spin",
+  comfort_level: "Nivel de comodidad",
+  maneuverability: "Maniobrabilidad",
+  recommended_player_level: "Nivel de jugador recomendado",
+  recommended_play_style: "Estilo de juego recomendado",
+  manufacturer_url: "URL del fabricante",
+  source_url: "URL de la fuente",
+};
 
 function toPayload(draft: Draft) {
   const payload: Record<string, unknown> = {
@@ -86,10 +143,17 @@ function toPayload(draft: Draft) {
     "image_url",
     "description",
     "product_url",
+    ...EXTRA_FIELDS,
   ] as const) {
-    const value = draft[key];
+    const value = draft[key as keyof Draft];
     payload[key] = value === "" || value === undefined ? null : value;
   }
+  payload["status"] = draft.is_current ?? true ? "current" : "discontinued";
+  payload["source_verified"] = draft.source_verified ?? false;
+  payload["incomplete_data"] = KEY_SPECS.some((k) => {
+    const v = payload[k] ?? (draft as Record<string, unknown>)[k];
+    return v === null || v === undefined || v === "";
+  });
   return payload;
 }
 
@@ -203,6 +267,12 @@ function Admin() {
               <p className="mt-2 text-sm text-muted-foreground">{rackets.length} registros en la base de datos.</p>
             </div>
             <div className="flex gap-3">
+              <Link
+                to="/audit"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-secondary"
+              >
+                Auditoría
+              </Link>
               <button
                 type="button"
                 onClick={() => setShowImport((v) => !v)}
@@ -282,6 +352,7 @@ function Admin() {
                     ["price", "Precio (USD de referencia)"],
                     ["image_url", "URL de imagen (solo con licencia)"],
                     ["product_url", "URL del producto"],
+                    ...EXTRA_FIELDS.map((f) => [f, EXTRA_LABELS[f]] as const),
                   ] as const
                 ).map(([key, label]) => (
                   <div key={key}>
@@ -339,6 +410,14 @@ function Admin() {
                     onChange={(e) => setDraft({ ...draft, is_current: e.target.checked })}
                   />
                   Modelo actual
+                </label>
+                <label className="flex items-end gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={draft.source_verified ?? false}
+                    onChange={(e) => setDraft({ ...draft, source_verified: e.target.checked })}
+                  />
+                  Fuente verificada
                 </label>
               </div>
               <div>
