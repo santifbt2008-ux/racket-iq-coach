@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { Page, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { Page, RacketVisual, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { BRANDS, DATA_DISCLAIMER, RACKETS, racketName } from "@/data/rackets";
@@ -12,10 +12,14 @@ export const Route = createFileRoute("/explore/")({
       { title: "Explore Rackets — searchable tennis racket database | RacketIQ" },
       {
         name: "description",
-        content: "Search and filter tennis rackets by brand, head size, weight, string pattern, power, control and spin.",
+        content:
+          "Search and filter tennis rackets by brand, head size, weight, string pattern, power, control and spin.",
       },
       { property: "og:title", content: "Explore Rackets — RacketIQ" },
-      { property: "og:description", content: "A searchable, filterable tennis racket specification database." },
+      {
+        property: "og:description",
+        content: "A searchable, filterable tennis racket specification database.",
+      },
     ],
   }),
   component: Explore,
@@ -25,7 +29,15 @@ const HEAD_SIZES = ["95–97", "98–99", "100", "102+"] as const;
 const WEIGHTS = ["Under 300g", "300–305g", "305–310g", "310g+"] as const;
 const PATTERNS = ["16x19", "18x20", "16x20", "16x18"] as const;
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
@@ -62,16 +74,29 @@ function Explore() {
       if (brands.length && !brands.includes(r.brand)) return false;
       if (heads.length) {
         const band =
-          r.head_size <= 97 ? "95–97" : r.head_size <= 99 ? "98–99" : r.head_size <= 101 ? "100" : "102+";
+          r.head_size <= 97
+            ? "95–97"
+            : r.head_size <= 99
+              ? "98–99"
+              : r.head_size <= 101
+                ? "100"
+                : "102+";
         if (!heads.includes(band)) return false;
       }
       if (weights.length) {
         const band =
-          r.weight < 300 ? "Under 300g" : r.weight <= 305 ? "300–305g" : r.weight <= 310 ? "305–310g" : "310g+";
+          r.weight < 300
+            ? "Under 300g"
+            : r.weight <= 305
+              ? "300–305g"
+              : r.weight <= 310
+                ? "305–310g"
+                : "310g+";
         if (!weights.includes(band)) return false;
       }
       if (patterns.length && !patterns.includes(r.string_pattern)) return false;
-      if (r.power_score < minPower || r.control_score < minControl || r.spin_score < minSpin) return false;
+      if (r.power_score < minPower || r.control_score < minControl || r.spin_score < minSpin)
+        return false;
       if (r.price > maxPrice) return false;
       return true;
     });
@@ -90,32 +115,53 @@ function Explore() {
             <aside className="panel h-fit space-y-6 p-6">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search rackets…" className="h-11 pl-9" />
+                <Input
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="Search rackets…"
+                  className="h-11 pl-9"
+                />
               </div>
               <FilterGroup label="Brand">
                 {BRANDS.map((b) => (
-                  <Chip key={b} active={brands.includes(b)} onClick={() => toggle(brands, setBrands, b)}>
+                  <Chip
+                    key={b}
+                    active={brands.includes(b)}
+                    onClick={() => toggle(brands, setBrands, b)}
+                  >
                     {b}
                   </Chip>
                 ))}
               </FilterGroup>
               <FilterGroup label="Head size">
                 {HEAD_SIZES.map((h) => (
-                  <Chip key={h} active={heads.includes(h)} onClick={() => toggle(heads, setHeads, h)}>
+                  <Chip
+                    key={h}
+                    active={heads.includes(h)}
+                    onClick={() => toggle(heads, setHeads, h)}
+                  >
                     {h}
                   </Chip>
                 ))}
               </FilterGroup>
               <FilterGroup label="Weight">
                 {WEIGHTS.map((w) => (
-                  <Chip key={w} active={weights.includes(w)} onClick={() => toggle(weights, setWeights, w)}>
+                  <Chip
+                    key={w}
+                    active={weights.includes(w)}
+                    onClick={() => toggle(weights, setWeights, w)}
+                  >
                     {w}
                   </Chip>
                 ))}
               </FilterGroup>
               <FilterGroup label="String pattern">
                 {PATTERNS.map((p) => (
-                  <Chip key={p} active={patterns.includes(p)} onClick={() => toggle(patterns, setPatterns, p)}>
+                  <Chip
+                    key={p}
+                    active={patterns.includes(p)}
+                    onClick={() => toggle(patterns, setPatterns, p)}
+                  >
                     {p}
                   </Chip>
                 ))}
@@ -128,7 +174,13 @@ function Explore() {
                   <span className="text-muted-foreground">Max price</span>
                   <span className="font-semibold">${maxPrice}</span>
                 </div>
-                <Slider min={150} max={300} step={10} value={[maxPrice]} onValueChange={(v) => setMaxPrice(v[0] ?? 300)} />
+                <Slider
+                  min={150}
+                  max={300}
+                  step={10}
+                  value={[maxPrice]}
+                  onValueChange={(v) => setMaxPrice(v[0] ?? 300)}
+                />
               </div>
             </aside>
 
@@ -140,22 +192,37 @@ function Explore() {
                     key={r.id}
                     to="/explore/$racketId"
                     params={{ racketId: r.id }}
-                    className="panel flex flex-col p-5 transition-colors hover:bg-surface-strong"
+                    className="panel flex flex-col overflow-hidden transition-colors hover:bg-surface-strong"
                   >
-                    <span className="eyebrow">{r.brand}</span>
-                    <h2 className="text-display mt-2 text-xl font-extrabold">{r.model}</h2>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {r.head_size} sq in · {r.weight}g · {r.string_pattern} · {r.swingweight} SW
-                    </p>
-                    <p className="mt-3 flex-1 text-sm text-muted-foreground">{r.description}</p>
-                    <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
-                      <span className="rounded-full bg-secondary px-2.5 py-1">Power {r.power_score}</span>
-                      <span className="rounded-full bg-secondary px-2.5 py-1">Control {r.control_score}</span>
-                      <span className="rounded-full bg-secondary px-2.5 py-1">Spin {r.spin_score}</span>
+                    <RacketVisual
+                      label={racketName(r)}
+                      image={r.image}
+                      className="aspect-[4/3] w-full rounded-none border-0 border-b"
+                    />
+                    <div className="flex flex-1 flex-col p-5">
+                      <span className="eyebrow">{r.brand}</span>
+                      <h2 className="text-display mt-2 text-xl font-extrabold">{r.model}</h2>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {r.head_size} sq in · {r.weight}g · {r.string_pattern} · {r.swingweight} SW
+                      </p>
+                      <p className="mt-3 flex-1 text-sm text-muted-foreground">{r.description}</p>
+                      <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                        <span className="rounded-full bg-secondary px-2.5 py-1">
+                          Power {r.power_score}
+                        </span>
+                        <span className="rounded-full bg-secondary px-2.5 py-1">
+                          Control {r.control_score}
+                        </span>
+                        <span className="rounded-full bg-secondary px-2.5 py-1">
+                          Spin {r.spin_score}
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 ))}
-                {!results.length && <p className="text-muted-foreground">No rackets match those filters.</p>}
+                {!results.length && (
+                  <p className="text-muted-foreground">No rackets match those filters.</p>
+                )}
               </div>
             </div>
           </div>
@@ -175,14 +242,28 @@ function FilterGroup({ label, children }: { label: string; children: React.React
   );
 }
 
-function RangeFilter({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+function RangeFilter({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
   return (
     <div>
       <div className="mb-2 flex justify-between text-sm">
         <span className="text-muted-foreground">{label}</span>
         <span className="font-semibold">{value}/10</span>
       </div>
-      <Slider min={1} max={10} step={1} value={[value]} onValueChange={(v) => onChange(v[0] ?? 1)} />
+      <Slider
+        min={1}
+        max={10}
+        step={1}
+        value={[value]}
+        onValueChange={(v) => onChange(v[0] ?? 1)}
+      />
     </div>
   );
 }

@@ -10,11 +10,7 @@ import { resolveRacketImage, type RacketImage } from "./racket-media";
 import { BRAND_SOURCES, resolveProductLink, type ProductLink } from "./racket-sources";
 
 export type PlayerType =
-  | "aggressive-baseliner"
-  | "all-court"
-  | "counterpuncher"
-  | "serve-volley"
-  | "defensive";
+  "aggressive-baseliner" | "all-court" | "counterpuncher" | "serve-volley" | "defensive";
 
 export type Level = "beginner" | "intermediate" | "advanced" | "tournament";
 
@@ -72,13 +68,18 @@ export interface Racket extends RacketSeed {
   image: RacketImage | null;
   product_link: ProductLink | null;
   spec_source_url: string;
+  /**
+   * 1-10. Not an authored spec — derived transparently from head size, comfort
+   * and stability so every racket has a consistent value without inventing a
+   * new per-racket "fact". Shown as an estimate, same as the other sample scores.
+   */
+  forgiveness_score: number;
 }
 
 export const DATA_DISCLAIMER =
   "Sample data — specifications are approximate demo values, not verified manufacturer specs.";
 
 const RACKET_SEED: RacketSeed[] = [
-
   {
     id: "yonex-vcore-98",
     brand: "Yonex",
@@ -876,7 +877,8 @@ const RACKET_SEED: RacketSeed[] = [
     recommended_player_types: ["all-court", "serve-volley"],
     recommended_level: ["advanced", "tournament"],
     price: 279,
-    description: "Heavier 100 sq in control frame — stability of a player's stick, bigger sweet spot.",
+    description:
+      "Heavier 100 sq in control frame — stability of a player's stick, bigger sweet spot.",
   },
 ];
 
@@ -886,6 +888,20 @@ function defaultTension(s: RacketSeed): [number, number] {
   const base = open ? 50 : 52;
   const shift = s.stiffness >= 68 ? -2 : s.stiffness <= 62 ? 2 : 0;
   return [base + shift, base + shift + 10];
+}
+
+const clamp1to10 = (n: number) => Math.max(1, Math.min(10, Math.round(n)));
+
+/** Bigger head + softer/more comfortable + stable = more forgiving. Estimate only. */
+function forgivenessEstimate(s: RacketSeed): number {
+  const headFactor = (s.head_size - 95) / 3; // ~0 at 95, ~2.3 at 102
+  const raw =
+    4 +
+    headFactor +
+    (s.comfort_score - 5) * 0.5 +
+    (s.stability_score - 5) * 0.2 -
+    (s.control_score - 7) * 0.3;
+  return clamp1to10(raw);
 }
 
 /**
@@ -913,6 +929,7 @@ function enrich(seed: RacketSeed): Racket {
     image_url: image?.url ?? "",
     image,
     product_link: resolveProductLink(seed.id, seed.brand),
+    forgiveness_score: forgivenessEstimate(seed),
   };
 }
 
@@ -927,4 +944,3 @@ export function getRacket(id: string): Racket | undefined {
 export function racketName(r: Racket): string {
   return `${r.brand} ${r.model}`;
 }
-

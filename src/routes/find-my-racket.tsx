@@ -15,6 +15,11 @@ import {
   DISLIKE_LABELS,
   LEVEL_OPTIONS,
   STYLE_LABELS,
+  AGE_OPTIONS,
+  TRAINING_FREQUENCY_OPTIONS,
+  GRIP_SIZE_OPTIONS,
+  BALANCE_OPTIONS,
+  BUDGET_OPTIONS,
   type Improvement,
   type PlayerProfile,
 } from "@/lib/profile";
@@ -25,16 +30,20 @@ export const Route = createFileRoute("/find-my-racket")({
       { title: "Racket Questionnaire — RacketIQ" },
       {
         name: "description",
-        content: "Answer 10 quick steps about your level, style and preferences to get your RacketIQ match.",
+        content:
+          "Answer 10 quick steps about your level, style and preferences to get your RacketIQ match.",
       },
       { property: "og:title", content: "Racket Questionnaire — RacketIQ" },
-      { property: "og:description", content: "Build your playing profile and get a personalized racket setup." },
+      {
+        property: "og:description",
+        content: "Build your playing profile and get a personalized racket setup.",
+      },
     ],
   }),
   component: Questionnaire,
 });
 
-const TOTAL = 10;
+const TOTAL = 13;
 
 function OptionButton({
   selected,
@@ -75,11 +84,64 @@ function SliderRow({
         <span className="font-medium">{label}</span>
         <span className="text-display text-2xl font-extrabold text-primary">{value}</span>
       </div>
-      <Slider min={1} max={10} step={1} value={[value]} onValueChange={(v) => onChange(v[0] ?? 5)} />
+      <Slider
+        min={1}
+        max={10}
+        step={1}
+        value={[value]}
+        onValueChange={(v) => onChange(v[0] ?? 5)}
+      />
       <div className="mt-2 flex justify-between text-xs text-muted-foreground">
         <span>Not important</span>
         <span>Essential</span>
       </div>
+    </div>
+  );
+}
+
+/** Tap items in the order that matters most; tapping again removes and re-numbers. */
+function RankPicker({
+  labels,
+  value,
+  onChange,
+}: {
+  labels: Record<Improvement, string>;
+  value: Improvement[];
+  onChange: (v: Improvement[]) => void;
+}) {
+  const toggle = (k: Improvement) => {
+    if (value.includes(k)) onChange(value.filter((x) => x !== k));
+    else onChange([...value, k]);
+  };
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {(Object.keys(labels) as Improvement[]).map((k) => {
+        const rank = value.indexOf(k);
+        const selected = rank !== -1;
+        return (
+          <button
+            key={k}
+            type="button"
+            onClick={() => toggle(k)}
+            className={`flex items-center gap-3 rounded-xl border px-5 py-4 text-left text-base font-medium transition-all ${
+              selected
+                ? "border-primary bg-primary/10 text-foreground"
+                : "border-border bg-surface text-muted-foreground hover:border-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <span
+              className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold ${
+                selected
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-muted-foreground"
+              }`}
+            >
+              {selected ? rank + 1 : ""}
+            </span>
+            {labels[k]}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -118,8 +180,6 @@ function Questionnaire() {
         return profile.styles.length > 0;
       case 2:
         return !!profile.forehand && !!profile.backhand;
-      case 8:
-        return true;
       default:
         return true;
     }
@@ -145,11 +205,14 @@ function Questionnaire() {
     "Strokes",
     "Spin & control",
     "Power, stability & speed",
-    "Head size",
-    "Weight & string pattern",
+    "What matters most?",
+    "Head size & balance",
+    "Weight, pattern & grip",
     "Your current racket",
+    "Racket setup details",
     "Likes & dislikes",
     "What should improve?",
+    "Budget",
   ];
 
   return (
@@ -177,25 +240,74 @@ function Questionnaire() {
               />
             </div>
 
-            <h1 className="text-display mt-8 text-3xl font-extrabold sm:text-4xl">{stepTitles[step]}</h1>
+            <h1 className="text-display mt-8 text-3xl font-extrabold sm:text-4xl">
+              {stepTitles[step]}
+            </h1>
 
             <div className="mt-8 space-y-8">
               {step === 0 && (
                 <>
-                  <Field label="What is your tennis level?">
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {LEVEL_OPTIONS.map((l) => (
-                        <OptionButton key={l} selected={profile.level === l} onClick={() => set("level", l)}>
+                  <Field label="Age">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {AGE_OPTIONS.map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.age === v}
+                          onClick={() => set("age", v)}
+                        >
                           {l}
                         </OptionButton>
                       ))}
                     </div>
                   </Field>
-                  <Field label="How often do you play?">
+                  <Field label="What is your tennis level?">
                     <div className="grid gap-3 sm:grid-cols-2">
-                      {["1–2 times/week", "3–4 times/week", "5+ times/week", "Competitive training"].map((f) => (
-                        <OptionButton key={f} selected={profile.frequency === f} onClick={() => set("frequency", f)}>
+                      {LEVEL_OPTIONS.map((l) => (
+                        <OptionButton
+                          key={l}
+                          selected={profile.level === l}
+                          onClick={() => set("level", l)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="Current UTR rating (optional, if you know it)">
+                    <Input
+                      value={profile.utr}
+                      onChange={(e) => set("utr", e.target.value)}
+                      placeholder="e.g. 7.2"
+                      className="h-12 max-w-xs"
+                    />
+                  </Field>
+                  <Field label="How often do you play matches/practice sets?">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {[
+                        "1–2 times/week",
+                        "3–4 times/week",
+                        "5+ times/week",
+                        "Competitive training",
+                      ].map((f) => (
+                        <OptionButton
+                          key={f}
+                          selected={profile.frequency === f}
+                          onClick={() => set("frequency", f)}
+                        >
                           {f}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="How often do you train (lessons, drills, hitting sessions)?">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {TRAINING_FREQUENCY_OPTIONS.map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.trainingFrequency === v}
+                          onClick={() => set("trainingFrequency", v)}
+                        >
+                          {l}
                         </OptionButton>
                       ))}
                     </div>
@@ -237,7 +349,11 @@ function Questionnaire() {
                           ["heavy", "Heavy topspin"],
                         ] as const
                       ).map(([v, l]) => (
-                        <OptionButton key={v} selected={profile.forehand === v} onClick={() => set("forehand", v)}>
+                        <OptionButton
+                          key={v}
+                          selected={profile.forehand === v}
+                          onClick={() => set("forehand", v)}
+                        >
                           {l}
                         </OptionButton>
                       ))}
@@ -251,7 +367,68 @@ function Questionnaire() {
                           ["two", "Two-handed"],
                         ] as const
                       ).map(([v, l]) => (
-                        <OptionButton key={v} selected={profile.backhand === v} onClick={() => set("backhand", v)}>
+                        <OptionButton
+                          key={v}
+                          selected={profile.backhand === v}
+                          onClick={() => set("backhand", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="How fast is your swing?">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {(
+                        [
+                          ["slow", "Slow / compact"],
+                          ["moderate", "Moderate"],
+                          ["fast", "Fast"],
+                        ] as const
+                      ).map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.swingSpeed === v}
+                          onClick={() => set("swingSpeed", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="How long is your swing?">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {(
+                        [
+                          ["compact", "Compact / short"],
+                          ["medium", "Medium"],
+                          ["long", "Long / full loop"],
+                        ] as const
+                      ).map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.swingLength === v}
+                          onClick={() => set("swingLength", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="Where do you typically make contact with the ball?">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {(
+                        [
+                          ["early", "Early / on the rise"],
+                          ["on-time", "Right at the top of the bounce"],
+                          ["late", "A bit late / deep"],
+                        ] as const
+                      ).map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.contactPoint === v}
+                          onClick={() => set("contactPoint", v)}
+                        >
                           {l}
                         </OptionButton>
                       ))}
@@ -262,7 +439,16 @@ function Questionnaire() {
 
               {step === 3 && (
                 <>
-                  <SliderRow label="How important is spin?" value={profile.spin} onChange={(v) => set("spin", v)} />
+                  <SliderRow
+                    label="How important is spin?"
+                    value={profile.spin}
+                    onChange={(v) => set("spin", v)}
+                  />
+                  <SliderRow
+                    label="How much topspin do you generally hit with?"
+                    value={profile.topspinLevel}
+                    onChange={(v) => set("topspinLevel", v)}
+                  />
                   <SliderRow
                     label="How important is control?"
                     value={profile.control}
@@ -273,7 +459,11 @@ function Questionnaire() {
 
               {step === 4 && (
                 <>
-                  <SliderRow label="How much power do you want?" value={profile.power} onChange={(v) => set("power", v)} />
+                  <SliderRow
+                    label="How much power do you want?"
+                    value={profile.power}
+                    onChange={(v) => set("power", v)}
+                  />
                   <SliderRow
                     label="How important is stability?"
                     value={profile.stability}
@@ -288,26 +478,55 @@ function Questionnaire() {
               )}
 
               {step === 5 && (
-                <Field label="Preferred head size (sq. in.)">
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    {(
-                      [
-                        ["95", "95"],
-                        ["98", "98"],
-                        ["100", "100"],
-                        ["102+", "102+"],
-                        ["any", "No preference"],
-                      ] as const
-                    ).map(([v, l]) => (
-                      <OptionButton key={v} selected={profile.headSize === v} onClick={() => set("headSize", v)}>
-                        {l}
-                      </OptionButton>
-                    ))}
-                  </div>
+                <Field label="Tap your top priorities in order — most important first (optional, but sharpens your match)">
+                  <RankPicker
+                    labels={IMPROVEMENT_LABELS}
+                    value={profile.priorityRanking}
+                    onChange={(v) => set("priorityRanking", v)}
+                  />
                 </Field>
               )}
 
               {step === 6 && (
+                <>
+                  <Field label="Preferred head size (sq. in.)">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {(
+                        [
+                          ["95", "95"],
+                          ["98", "98"],
+                          ["100", "100"],
+                          ["102+", "102+"],
+                          ["any", "No preference"],
+                        ] as const
+                      ).map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.headSize === v}
+                          onClick={() => set("headSize", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="Preferred balance">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {BALANCE_OPTIONS.map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.balance === v}
+                          onClick={() => set("balance", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                </>
+              )}
+
+              {step === 7 && (
                 <>
                   <Field label="Preferred weight (strung)">
                     <div className="grid gap-3 sm:grid-cols-3">
@@ -320,7 +539,11 @@ function Questionnaire() {
                           ["any", "No preference"],
                         ] as const
                       ).map(([v, l]) => (
-                        <OptionButton key={v} selected={profile.weight === v} onClick={() => set("weight", v)}>
+                        <OptionButton
+                          key={v}
+                          selected={profile.weight === v}
+                          onClick={() => set("weight", v)}
+                        >
                           {l}
                         </OptionButton>
                       ))}
@@ -335,7 +558,24 @@ function Questionnaire() {
                           ["any", "No preference"],
                         ] as const
                       ).map(([v, l]) => (
-                        <OptionButton key={v} selected={profile.pattern === v} onClick={() => set("pattern", v)}>
+                        <OptionButton
+                          key={v}
+                          selected={profile.pattern === v}
+                          onClick={() => set("pattern", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="Grip size (check the butt cap of your current racket if unsure)">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {GRIP_SIZE_OPTIONS.map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.gripSize === v}
+                          onClick={() => set("gripSize", v)}
+                        >
                           {l}
                         </OptionButton>
                       ))}
@@ -344,7 +584,7 @@ function Questionnaire() {
                 </>
               )}
 
-              {step === 7 && (
+              {step === 8 && (
                 <Field label="What do you currently play with?">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -360,7 +600,9 @@ function Questionnaire() {
                       <OptionButton
                         key={r.id}
                         selected={profile.currentRacketId === r.id}
-                        onClick={() => set("currentRacketId", profile.currentRacketId === r.id ? "" : r.id)}
+                        onClick={() =>
+                          set("currentRacketId", profile.currentRacketId === r.id ? "" : r.id)
+                        }
                       >
                         <span className="font-semibold text-foreground">{racketName(r)}</span>
                         <span className="ml-2 text-sm text-muted-foreground">
@@ -368,13 +610,69 @@ function Questionnaire() {
                         </span>
                       </OptionButton>
                     ))}
-                    {!matches.length && <p className="text-sm text-muted-foreground">No rackets match that search.</p>}
+                    {!matches.length && (
+                      <p className="text-sm text-muted-foreground">No rackets match that search.</p>
+                    )}
                   </div>
-                  <p className="mt-3 text-xs text-muted-foreground">Optional — skip if your racket isn't listed.</p>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Optional — skip if your racket isn't listed.
+                  </p>
                 </Field>
               )}
 
-              {step === 8 && (
+              {step === 9 && (
+                <>
+                  <Field label="Your current setup (optional — fill in what you know)">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <LabeledInput
+                        label="Current racket weight (g)"
+                        value={profile.currentRacketWeight}
+                        onChange={(v) => set("currentRacketWeight", v)}
+                        placeholder="e.g. 305"
+                      />
+                      <LabeledInput
+                        label="Current head size (sq in)"
+                        value={profile.currentRacketHeadSize}
+                        onChange={(v) => set("currentRacketHeadSize", v)}
+                        placeholder="e.g. 100"
+                      />
+                      <LabeledInput
+                        label="Current string setup"
+                        value={profile.currentStringSetup}
+                        onChange={(v) => set("currentStringSetup", v)}
+                        placeholder="e.g. Poly mains, synthetic crosses"
+                      />
+                      <LabeledInput
+                        label="Current tension (lbs), if known"
+                        value={profile.currentTension}
+                        onChange={(v) => set("currentTension", v)}
+                        placeholder="e.g. 50"
+                      />
+                    </div>
+                  </Field>
+                  <Field label="How sensitive is your arm/elbow/shoulder to a stiffer frame or setup?">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {(
+                        [
+                          ["none", "Not sensitive"],
+                          ["mild", "Somewhat sensitive"],
+                          ["significant", "Significant (e.g. tennis elbow history)"],
+                        ] as const
+                      ).map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.comfortSensitivity === v}
+                          onClick={() => set("comfortSensitivity", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                </>
+              )}
+
+              {step === 10 && (
                 <>
                   <Field label="What do you like about your current racket? (select all that apply)">
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -419,7 +717,7 @@ function Questionnaire() {
                 </>
               )}
 
-              {step === 9 && (
+              {step === 11 && (
                 <Field label="What do you want your next racket to improve? (select all that apply)">
                   <div className="grid gap-3 sm:grid-cols-3">
                     {(Object.keys(IMPROVEMENT_LABELS) as Improvement[]).map((imp) => (
@@ -440,6 +738,40 @@ function Questionnaire() {
                     ))}
                   </div>
                 </Field>
+              )}
+
+              {step === 12 && (
+                <>
+                  <Field label="What's your budget for a racket?">
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {BUDGET_OPTIONS.map(([v, l]) => (
+                        <OptionButton
+                          key={v}
+                          selected={profile.budget === v}
+                          onClick={() => set("budget", v)}
+                        >
+                          {l}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="If a pricier racket is a noticeably better fit, would you consider paying more?">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <OptionButton
+                        selected={profile.payMoreForFit}
+                        onClick={() => set("payMoreForFit", true)}
+                      >
+                        Yes, fit matters more than price
+                      </OptionButton>
+                      <OptionButton
+                        selected={!profile.payMoreForFit}
+                        onClick={() => set("payMoreForFit", false)}
+                      >
+                        No, stay within budget
+                      </OptionButton>
+                    </div>
+                  </Field>
+                </>
               )}
             </div>
 
@@ -475,5 +807,29 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <h2 className="mb-4 text-lg font-semibold">{label}</h2>
       {children}
     </div>
+  );
+}
+
+function LabeledInput({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm text-muted-foreground">{label}</span>
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="h-11"
+      />
+    </label>
   );
 }

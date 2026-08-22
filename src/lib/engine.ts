@@ -5,7 +5,13 @@
  * source of truth for specifications — nothing here invents specs.
  */
 import { RACKETS, racketName, type Racket } from "@/data/rackets";
-import { DISLIKE_LABELS, IMPROVEMENT_LABELS, STYLE_LABELS, type PlayerProfile } from "@/lib/profile";
+import {
+  DISLIKE_LABELS,
+  IMPROVEMENT_LABELS,
+  STYLE_LABELS,
+  type Improvement,
+  type PlayerProfile,
+} from "@/lib/profile";
 
 export interface DimensionScore {
   key: string;
@@ -101,7 +107,50 @@ function levelScore(profile: PlayerProfile, r: Racket) {
   return r.recommended_level.includes(bucket) ? 100 : 70;
 }
 
-/** Improvement selections nudge the desired attribute values upward. */
+function balanceScore(profile: PlayerProfile, r: Racket) {
+  if (!profile.balance || profile.balance === "any") return 82;
+  // Balance point in cm from the butt cap; roughly <32 head-light, 32-32.5 even, >32.5 head-heavy for a 27" frame.
+  const bucket = r.balance < 32 ? "head-light" : r.balance <= 32.5 ? "even" : "head-heavy";
+  return bucket === profile.balance ? 100 : 65;
+}
+
+function budgetScore(profile: PlayerProfile, r: Racket) {
+  if (!profile.budget || profile.budget === "any") return 85;
+  const caps: Record<string, [number, number]> = {
+    u150: [0, 150],
+    "150-250": [150, 250],
+    "250-350": [250, 350],
+    "350+": [350, Infinity],
+  };
+  const [lo, hi] = caps[profile.budget] ?? [0, Infinity];
+  if (r.price >= lo && r.price <= hi) return 100;
+  if (profile.payMoreForFit)
+    return r.price > hi ? clamp(100 - (r.price - hi) * 0.3) : clamp(100 - (lo - r.price) * 0.5);
+  // Not willing to pay more: over-budget rackets are penalised hard, under-budget lightly.
+  return r.price > hi ? clamp(60 - (r.price - hi) * 0.6) : clamp(90 - (lo - r.price) * 0.2);
+}
+
+/** Comfort sensitivity nudges the desired comfort target and how hard it's weighted. */
+function comfortTarget(profile: PlayerProfile) {
+  if (profile.comfortSensitivity === "significant") return 9;
+  if (profile.comfortSensitivity === "mild") return 7.5;
+  return profile.improvements.includes("comfort") ? 8.5 : 6;
+}
+
+function comfortWeight(profile: PlayerProfile) {
+  if (profile.comfortSensitivity === "significant") return 1.8;
+  if (profile.comfortSensitivity === "mild") return 1.1;
+  return profile.improvements.includes("comfort") ? 1.4 : 0.6;
+}
+
+/** Priority ranking gives the player's explicitly ordered items an extra weight boost, front-loaded. */
+function rankingBoost(profile: PlayerProfile, key: string) {
+  const idx = profile.priorityRanking.indexOf(key as Improvement);
+  if (idx === -1) return 0;
+  return Math.max(0, 0.8 - idx * 0.2); // 1st: +0.8, 2nd: +0.6, 3rd: +0.4, 4th: +0.2
+}
+
+/** Improvement selections, swing mechanics and topspin level nudge the desired attribute values upward. */
 function desiredAttributes(profile: PlayerProfile) {
   const bump = (key: string, base: number) =>
     clamp(
@@ -111,27 +160,39 @@ function desiredAttributes(profile: PlayerProfile) {
       1,
       10,
     );
+
+  // Faster/longer swings and a heavy topspin ball generate their own racket-head
+  // speed, so the player needs less "free" power/spin from the frame itself.
+  const swingSpeedAdj = profile.swingSpeed === "fast" ? -1 : profile.swingSpeed === "slow" ? 1 : 0;
+  const swingLengthAdj =
+    profile.swingLength === "long" ? -0.5 : profile.swingLength === "compact" ? 0.5 : 0;
+  const topspinAdj = (profile.topspinLevel - 5) * 0.3;
+  const contactAdj =
+    profile.contactPoint === "late" ? 0.5 : profile.contactPoint === "early" ? -0.3 : 0;
+
   return {
-    spin: bump("spin", target(profile.spin)),
-    control: bump("control", target(profile.control)),
-    power: bump("power", target(profile.power)),
+    spin: clamp(bump("spin", target(profile.spin)) + topspinAdj, 1, 10),
+    control: clamp(bump("control", target(profile.control)) + contactAdj, 1, 10),
+    power: clamp(bump("power", target(profile.power)) + swingSpeedAdj + swingLengthAdj, 1, 10),
     stability: bump("stability", target(profile.stability)),
     maneuverability: bump("maneuverability", target(profile.maneuverability)),
-    comfort: profile.improvements.includes("comfort") ? 8.5 : 6,
+    comfort: comfortTarget(profile),
   };
 }
 
 function weights(profile: PlayerProfile) {
   const w = {
-    spin: 1 + profile.spin / 10,
-    control: 1 + profile.control / 10,
-    power: 1 + profile.power / 10,
-    stability: 1 + profile.stability / 10,
-    maneuverability: 1 + profile.maneuverability / 10,
-    comfort: profile.improvements.includes("comfort") ? 1.4 : 0.6,
+    spin: 1 + profile.spin / 10 + rankingBoost(profile, "spin"),
+    control: 1 + profile.control / 10 + rankingBoost(profile, "control"),
+    power: 1 + profile.power / 10 + rankingBoost(profile, "power"),
+    stability: 1 + profile.stability / 10 + rankingBoost(profile, "stability"),
+    maneuverability: 1 + profile.maneuverability / 10 + rankingBoost(profile, "maneuverability"),
+    comfort: comfortWeight(profile) + rankingBoost(profile, "comfort"),
     headSize: profile.headSize && profile.headSize !== "any" ? 1.4 : 0.7,
     weight: profile.weight && profile.weight !== "any" ? 1.3 : 0.7,
+    balance: profile.balance && profile.balance !== "any" ? 1.1 : 0.5,
     pattern: profile.pattern && profile.pattern !== "any" ? 1.0 : 0.5,
+    budget: profile.budget && profile.budget !== "any" ? 1.2 : 0.4,
     style: 1.1,
     level: 1.0,
   };
@@ -152,19 +213,36 @@ export function scoreRacket(profile: PlayerProfile, r: Racket): MatchResult {
 
   const dims: DimensionScore[] = [
     { key: "spin", label: "Spin", score: attrScore(r.spin_score, d.spin, false), weight: w.spin },
-    { key: "control", label: "Control", score: attrScore(r.control_score, d.control, false), weight: w.control },
+    {
+      key: "control",
+      label: "Control",
+      score: attrScore(r.control_score, d.control, false),
+      weight: w.control,
+    },
     { key: "power", label: "Power", score: attrScore(r.power_score, d.power), weight: w.power },
-    { key: "stability", label: "Stability", score: attrScore(r.stability_score, d.stability, false), weight: w.stability },
+    {
+      key: "stability",
+      label: "Stability",
+      score: attrScore(r.stability_score, d.stability, false),
+      weight: w.stability,
+    },
     {
       key: "maneuverability",
       label: "Maneuverability",
       score: attrScore(r.maneuverability_score, d.maneuverability, false),
       weight: w.maneuverability,
     },
-    { key: "comfort", label: "Comfort", score: attrScore(r.comfort_score, d.comfort, false), weight: w.comfort },
+    {
+      key: "comfort",
+      label: "Comfort",
+      score: attrScore(r.comfort_score, d.comfort, false),
+      weight: w.comfort,
+    },
     { key: "headSize", label: "Head Size", score: headSizeScore(profile, r), weight: w.headSize },
     { key: "weight", label: "Weight", score: weightScore(profile, r), weight: w.weight },
+    { key: "balance", label: "Balance", score: balanceScore(profile, r), weight: w.balance },
     { key: "pattern", label: "String Pattern", score: patternScore(profile, r), weight: w.pattern },
+    { key: "budget", label: "Budget Fit", score: budgetScore(profile, r), weight: w.budget },
     { key: "style", label: "Playing Style", score: styleScore(profile, r), weight: w.style },
     { key: "level", label: "Level Fit", score: levelScore(profile, r), weight: w.level },
   ];
@@ -177,7 +255,12 @@ export function scoreRacket(profile: PlayerProfile, r: Racket): MatchResult {
 
   overall = Math.round(clamp(overall));
 
-  return { racket: r, overall, dimensions: dims.map((x) => ({ ...x, score: Math.round(x.score) })), reasons: [] };
+  return {
+    racket: r,
+    overall,
+    dimensions: dims.map((x) => ({ ...x, score: Math.round(x.score) })),
+    reasons: [],
+  };
 }
 
 export function recommend(profile: PlayerProfile, limit = 3): MatchResult[] {
@@ -252,7 +335,10 @@ function buildReasons(profile: PlayerProfile, m: MatchResult): string[] {
     }
   }
   if (profile.dislikes.length) {
-    const issues = profile.dislikes.map((d) => DISLIKE_LABELS[d].toLowerCase()).slice(0, 2).join(" and ");
+    const issues = profile.dislikes
+      .map((d) => DISLIKE_LABELS[d].toLowerCase())
+      .slice(0, 2)
+      .join(" and ");
     reasons.push(
       `You flagged ${issues} on your current racket — this frame scores ${Math.round(m.overall)}% against your profile overall, with its strongest fit in ${strongestDims(m).join(" and ")}.`,
     );
@@ -287,7 +373,8 @@ export function recommendString(profile: PlayerProfile, r: Racket): StringSetup 
   const control = profile.control;
   const spin = profile.spin;
   const power = profile.power;
-  const wantsComfort = profile.improvements.includes("comfort") || profile.improvements.includes("feel");
+  const wantsComfort =
+    profile.improvements.includes("comfort") || profile.improvements.includes("feel");
   const advanced = ["advanced", "tournament"].includes(levelBucket(profile.level));
 
   let string: string;
@@ -328,7 +415,9 @@ export function recommendString(profile: PlayerProfile, r: Racket): StringSetup 
     "Polyester loses tension quickly — plan to restring roughly as often per year as you play per week.",
   ];
   if (wantsComfort)
-    notes.push("If you have any arm sensitivity, string at the lower end of the range or move to a softer setup.");
+    notes.push(
+      "If you have any arm sensitivity, string at the lower end of the range or move to a softer setup.",
+    );
 
   return {
     string,
@@ -337,6 +426,56 @@ export function recommendString(profile: PlayerProfile, r: Racket): StringSetup 
     tension: `${lo}–${hi} lbs`,
     rationale: `Recommended because you rated control ${control}/10, spin ${spin}/10 and power ${power}/10, and the ${racketName(r)} is a ${r.power_score >= 8 ? "higher-powered" : r.power_score <= 6 ? "lower-powered" : "medium-powered"} frame (${r.power_score}/10 power in our sample data). ${poly ? "A polyester bed keeps the ball in when you swing fast" : "A softer string adds response and comfort"} while the tension range keeps launch predictable.`,
     notes,
+  };
+}
+
+/* ------------------------ Grip, overgrip & dampener ------------------------ */
+
+export interface GripSetup {
+  size: string;
+  rationale: string;
+  overgrip: string;
+  dampener: string;
+}
+
+const GRIP_LABELS: Record<string, string> = {
+  "4": '4 (4")',
+  "4_1_8": '4⅛" (L1)',
+  "4_1_4": '4¼" (L2)',
+  "4_3_8": '4⅜" (L3)',
+  "4_1_2": '4½" (L4)',
+};
+
+/** Grip size is never guessed from scratch — we use the player's stated size,
+ * or their current racket's grip if known, and only fall back to a level-based
+ * default (clearly marked as a starting point, not a fitted measurement). */
+export function recommendGrip(profile: PlayerProfile): GripSetup {
+  const advanced = ["advanced", "tournament"].includes(levelBucket(profile.level));
+  let size = profile.gripSize && profile.gripSize !== "unsure" ? profile.gripSize : "";
+  let rationale: string;
+
+  if (size) {
+    rationale = `Based on the grip size you told us you use (${GRIP_LABELS[size] ?? size}).`;
+  } else {
+    // Fallback default — most adult players land on 4⅜"; this is a starting point only.
+    size = "4_3_8";
+    rationale =
+      "We don't have your measured grip size, so this defaults to the most common adult size (4⅜\"). A too-small grip increases wrist/arm strain; a too-big grip restricts spin — have a shop bump it up with a heat-shrink sleeve if it feels off rather than guessing further.";
+  }
+
+  const wantsSpin = profile.spin >= 7 || profile.improvements.includes("spin");
+  const overgrip = wantsSpin
+    ? "Tacky, thin overgrip (e.g. Tourna Grip or Yonex Super Grap) — replaced every 1–2 weeks"
+    : "Cushioned, absorbent overgrip — replaced every 2–4 weeks";
+  const dampener = profile.improvements.includes("feel")
+    ? "Optional silicone dampener for a softer sound/feel — has no effect on power, spin or control"
+    : "Optional — comes down to preference, not performance";
+
+  return {
+    size: GRIP_LABELS[size] ?? size,
+    rationale,
+    overgrip,
+    dampener,
   };
 }
 
@@ -398,7 +537,6 @@ export function recommendCustomization(
     suggestions,
   };
 }
-
 
 /* ---------------------------- Comparison ---------------------------- */
 

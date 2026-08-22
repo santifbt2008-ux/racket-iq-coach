@@ -13,7 +13,9 @@ export const Route = createFileRoute("/explore/$racketId")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Racket not found — RacketIQ" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [{ title: "Racket not found — RacketIQ" }, { name: "robots", content: "noindex" }],
+      };
     }
     const name = racketName(loaderData.racket);
     return {
@@ -59,7 +61,8 @@ function considerations(r: Racket) {
   const out: string[] = [];
   if (r.power_score <= 6) out.push("You supply the power — needs a full, committed swing");
   if (r.control_score <= 6) out.push("Can launch long if your swing is short or tentative");
-  if (r.comfort_score <= 6) out.push("Stiffer response — pair with a softer string if arm sensitive");
+  if (r.comfort_score <= 6)
+    out.push("Stiffer response — pair with a softer string if arm sensitive");
   if (r.maneuverability_score <= 6) out.push("Slower through the air in fast exchanges");
   if (r.spin_score <= 6) out.push("Lower spin ceiling than open-pattern frames");
   return out.length ? out : ["No standout drawbacks in our sample ratings"];
@@ -90,6 +93,7 @@ function Detail() {
     ["Stability", r.stability_score],
     ["Maneuverability", r.maneuverability_score],
     ["Comfort", r.comfort_score],
+    ["Forgiveness (est.)", r.forgiveness_score],
   ];
 
   return (
@@ -126,7 +130,10 @@ function Detail() {
                       <span className="font-semibold">{v}/10</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-secondary">
-                      <div className="h-full rounded-full bg-primary" style={{ width: `${v * 10}%` }} />
+                      <div
+                        className="h-full rounded-full bg-primary"
+                        style={{ width: `${v * 10}%` }}
+                      />
                     </div>
                   </div>
                 ))}
@@ -140,7 +147,10 @@ function Detail() {
                   </span>
                 ))}
                 {r.recommended_level.map((l) => (
-                  <span key={l} className="rounded-full border border-border px-3 py-1.5 text-sm capitalize">
+                  <span
+                    key={l}
+                    className="rounded-full border border-border px-3 py-1.5 text-sm capitalize"
+                  >
                     {l}
                   </span>
                 ))}
@@ -198,8 +208,9 @@ function Detail() {
                 </p>
               )}
               <p className="mt-2 text-xs text-muted-foreground">{DATA_DISCLAIMER}</p>
-              {!r.image && <p className="mt-2 text-xs text-muted-foreground">{IMAGE_POLICY_NOTE}</p>}
-
+              {!r.image && (
+                <p className="mt-2 text-xs text-muted-foreground">{IMAGE_POLICY_NOTE}</p>
+              )}
             </div>
           </div>
 

@@ -4,7 +4,7 @@ import { ArrowRight, RotateCcw } from "lucide-react";
 import { Page, RacketVisual, ScoreBar, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { DATA_DISCLAIMER, getRacket, racketName } from "@/data/rackets";
 import { IMAGE_POLICY_NOTE } from "@/data/racket-media";
-import { recommend, recommendCustomization, recommendString } from "@/lib/engine";
+import { recommend, recommendCustomization, recommendGrip, recommendString } from "@/lib/engine";
 import { useStoredProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/results")({
@@ -13,10 +13,14 @@ export const Route = createFileRoute("/results")({
       { title: "Your RacketIQ Match — personalized racket results" },
       {
         name: "description",
-        content: "Your top 3 racket matches, transparent match scores, and a personalized string and setup plan.",
+        content:
+          "Your top 3 racket matches, transparent match scores, and a personalized string and setup plan.",
       },
       { property: "og:title", content: "Your RacketIQ Match" },
-      { property: "og:description", content: "Top racket matches, match-score breakdown and a personalized setup." },
+      {
+        property: "og:description",
+        content: "Top racket matches, match-score breakdown and a personalized setup.",
+      },
     ],
   }),
   component: Results,
@@ -92,6 +96,7 @@ function Results() {
   if (!top) return null;
 
   const stringSetup = recommendString(profile, top.racket);
+  const grip = recommendGrip(profile);
   const custom = recommendCustomization(profile, top.racket);
   const current = profile.currentRacketId ? getRacket(profile.currentRacketId) : undefined;
 
@@ -122,19 +127,29 @@ function Results() {
 
           {/* Primary match */}
           <section className="panel elevated mt-10 grid gap-8 p-6 md:grid-cols-[.8fr_1.2fr] md:p-10">
-            <RacketVisual label={racketName(top.racket)} image={top.racket.image} className="min-h-[320px]" />
+            <RacketVisual
+              label={racketName(top.racket)}
+              image={top.racket.image}
+              className="min-h-[320px]"
+            />
             <div>
               <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-widest text-primary-foreground">
                 #1 Match
               </span>
-              <h2 className="text-display mt-5 text-4xl font-extrabold">{racketName(top.racket)}</h2>
+              <h2 className="text-display mt-5 text-4xl font-extrabold">
+                {racketName(top.racket)}
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {top.racket.brand} · {top.racket.year} · {top.racket.head_size} sq in · {top.racket.weight}g ·{" "}
-                {top.racket.string_pattern}
+                {top.racket.brand} · {top.racket.year} · {top.racket.head_size} sq in ·{" "}
+                {top.racket.weight}g · {top.racket.string_pattern}
               </p>
               <div className="mt-6 flex items-baseline gap-3">
-                <span className="text-display text-6xl font-extrabold text-primary">{top.overall}%</span>
-                <span className="text-sm uppercase tracking-widest text-muted-foreground">Match</span>
+                <span className="text-display text-6xl font-extrabold text-primary">
+                  {top.overall}%
+                </span>
+                <span className="text-sm uppercase tracking-widest text-muted-foreground">
+                  Match
+                </span>
               </div>
 
               <h3 className="mt-8 text-lg font-bold">Key specifications</h3>
@@ -151,9 +166,13 @@ function Results() {
                     ["Stiffness", `${top.racket.stiffness} RA`],
                     ["Rec. tension", `${top.racket.tension_min}–${top.racket.tension_max} lbs`],
                     ["Composition", top.racket.composition],
+                    ["Forgiveness (est.)", `${top.racket.forgiveness_score}/10`],
                   ] as [string, string][]
                 ).map(([k, v]) => (
-                  <div key={k} className="flex justify-between border-b border-border pb-1.5 text-sm">
+                  <div
+                    key={k}
+                    className="flex justify-between border-b border-border pb-1.5 text-sm"
+                  >
                     <dt className="text-muted-foreground">{k}</dt>
                     <dd className="font-semibold">{v}</dd>
                   </div>
@@ -188,18 +207,23 @@ function Results() {
                   </a>
                 )}
               </div>
-              {!top.racket.image && <p className="mt-4 text-xs text-muted-foreground">{IMAGE_POLICY_NOTE}</p>}
+              {!top.racket.image && (
+                <p className="mt-4 text-xs text-muted-foreground">{IMAGE_POLICY_NOTE}</p>
+              )}
             </div>
           </section>
-
 
           {/* Match score breakdown */}
           <section className="mt-14">
             <h2 className="text-display text-3xl font-extrabold">Match score breakdown</h2>
             <div className="panel mt-6 p-6 md:p-8">
               <div className="mb-6 flex items-baseline gap-3 border-b border-border pb-6">
-                <span className="text-sm uppercase tracking-widest text-muted-foreground">Overall Match</span>
-                <span className="text-display text-3xl font-extrabold text-primary">{top.overall}%</span>
+                <span className="text-sm uppercase tracking-widest text-muted-foreground">
+                  Overall Match
+                </span>
+                <span className="text-display text-3xl font-extrabold text-primary">
+                  {top.overall}%
+                </span>
               </div>
               <div className="grid gap-5 sm:grid-cols-2">
                 {top.dimensions.map((d) => (
@@ -207,8 +231,8 @@ function Results() {
                 ))}
               </div>
               <p className="mt-6 text-xs text-muted-foreground">
-                Scores are computed by comparing your answers against each racket's attributes in our database, weighted
-                by the priorities you set. {DATA_DISCLAIMER}
+                Scores are computed by comparing your answers against each racket's attributes in
+                our database, weighted by the priorities you set. {DATA_DISCLAIMER}
               </p>
             </div>
           </section>
@@ -220,9 +244,13 @@ function Results() {
               {[second, third].filter(Boolean).map((m, i) => (
                 <div key={m!.racket.id} className="panel flex flex-col p-6">
                   <span className="eyebrow">#{i + 2} Match</span>
-                  <h3 className="text-display mt-3 text-2xl font-extrabold">{racketName(m!.racket)}</h3>
+                  <h3 className="text-display mt-3 text-2xl font-extrabold">
+                    {racketName(m!.racket)}
+                  </h3>
                   <p className="text-sm text-muted-foreground">{m!.racket.brand}</p>
-                  <span className="text-display mt-4 text-4xl font-extrabold text-primary">{m!.overall}%</span>
+                  <span className="text-display mt-4 text-4xl font-extrabold text-primary">
+                    {m!.overall}%
+                  </span>
                   <p className="mt-4 flex-1 text-sm text-muted-foreground">{m!.reasons[0]}</p>
                   <Link
                     to="/explore/$racketId"
@@ -241,7 +269,11 @@ function Results() {
             <h2 className="text-display text-3xl font-extrabold">Your Recommended Setup</h2>
             <div className="panel mt-6 grid gap-6 p-6 md:grid-cols-3 md:p-8">
               <Stat label="String" value={stringSetup.string} sub={stringSetup.type} />
-              <Stat label="Gauge" value={stringSetup.gauge} sub="Thinner = more spin, shorter life" />
+              <Stat
+                label="Gauge"
+                value={stringSetup.gauge}
+                sub="Thinner = more spin, shorter life"
+              />
               <Stat label="Tension" value={stringSetup.tension} sub="Range, not a single number" />
               <div className="md:col-span-3">
                 <p className="text-sm text-muted-foreground">{stringSetup.rationale}</p>
@@ -257,6 +289,24 @@ function Results() {
             </div>
           </section>
 
+          {/* Grip, overgrip & dampener */}
+          <section className="mt-14">
+            <h2 className="text-display text-3xl font-extrabold">Grip & Accessories</h2>
+            <div className="panel mt-6 grid gap-6 p-6 md:grid-cols-3 md:p-8">
+              <Stat label="Grip size" value={grip.size} sub={grip.rationale} />
+              <Stat
+                label="Overgrip"
+                value={grip.overgrip.split(" — ")[0] ?? grip.overgrip}
+                sub={grip.overgrip.split(" — ")[1] ?? ""}
+              />
+              <Stat
+                label="Dampener"
+                value={grip.dampener.split(" — ")[0] ?? grip.dampener}
+                sub={grip.dampener.split(" — ")[1] ?? ""}
+              />
+            </div>
+          </section>
+
           {/* Customization */}
           <section className="mt-14">
             <h2 className="text-display text-3xl font-extrabold">Should You Customize It?</h2>
@@ -265,7 +315,10 @@ function Results() {
               {custom.needed && (
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   {custom.suggestions.map((s) => (
-                    <div key={s.item} className="rounded-xl border border-border bg-surface-strong p-5">
+                    <div
+                      key={s.item}
+                      className="rounded-xl border border-border bg-surface-strong p-5"
+                    >
                       <p className="font-semibold">{s.item}</p>
                       <p className="mt-2 text-sm text-muted-foreground">Goal: {s.goal}</p>
                     </div>

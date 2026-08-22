@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { X } from "lucide-react";
-import { Page, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { Page, RacketVisual, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Input } from "@/components/ui/input";
 import { DATA_DISCLAIMER, RACKETS, getRacket, racketName } from "@/data/rackets";
 import { compareForPlayer } from "@/lib/engine";
@@ -13,10 +13,14 @@ export const Route = createFileRoute("/compare")({
       { title: "Compare Rackets — side-by-side specs | RacketIQ" },
       {
         name: "description",
-        content: "Compare up to three tennis rackets spec by spec and see which one fits your playing profile best.",
+        content:
+          "Compare up to three tennis rackets spec by spec and see which one fits your playing profile best.",
       },
       { property: "og:title", content: "Compare Rackets — RacketIQ" },
-      { property: "og:description", content: "Side-by-side racket specifications and a personalized verdict." },
+      {
+        property: "og:description",
+        content: "Side-by-side racket specifications and a personalized verdict.",
+      },
     ],
   }),
   component: Compare,
@@ -35,9 +39,11 @@ const ROWS = [
   ["Spin", (r: (typeof RACKETS)[number]) => `${r.spin_score}/10`],
   ["Stability", (r: (typeof RACKETS)[number]) => `${r.stability_score}/10`],
   ["Maneuverability", (r: (typeof RACKETS)[number]) => `${r.maneuverability_score}/10`],
+  ["Forgiveness (est.)", (r: (typeof RACKETS)[number]) => `${r.forgiveness_score}/10`],
   [
     "Recommended player type",
-    (r: (typeof RACKETS)[number]) => r.recommended_player_types.map((t) => STYLE_LABELS[t]).join(", "),
+    (r: (typeof RACKETS)[number]) =>
+      r.recommended_player_types.map((t) => STYLE_LABELS[t]).join(", "),
   ],
 ] as const;
 
@@ -49,14 +55,14 @@ function Compare() {
   const selected = ids.map((id) => getRacket(id)!).filter(Boolean);
   const options = useMemo(() => {
     const term = q.trim().toLowerCase();
-    return RACKETS.filter((r) => !ids.includes(r.id) && (!term || racketName(r).toLowerCase().includes(term))).slice(
-      0,
-      8,
-    );
+    return RACKETS.filter(
+      (r) => !ids.includes(r.id) && (!term || racketName(r).toLowerCase().includes(term)),
+    ).slice(0, 8);
   }, [q, ids]);
 
   const verdict = useMemo(
-    () => (profile && profile.level && selected.length >= 2 ? compareForPlayer(profile, selected) : null),
+    () =>
+      profile && profile.level && selected.length >= 2 ? compareForPlayer(profile, selected) : null,
     [profile, selected],
   );
 
@@ -66,13 +72,22 @@ function Compare() {
       <main>
         <Page>
           <p className="eyebrow">Head to head</p>
-          <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">Compare up to 3 rackets</h1>
+          <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">
+            Compare up to 3 rackets
+          </h1>
 
           <div className="mt-8 flex flex-wrap gap-2">
             {selected.map((r) => (
-              <span key={r.id} className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm">
+              <span
+                key={r.id}
+                className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm"
+              >
                 {racketName(r)}
-                <button type="button" onClick={() => setIds(ids.filter((x) => x !== r.id))} aria-label="Remove">
+                <button
+                  type="button"
+                  onClick={() => setIds(ids.filter((x) => x !== r.id))}
+                  aria-label="Remove"
+                >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </span>
@@ -81,7 +96,12 @@ function Compare() {
 
           {ids.length < 3 && (
             <div className="panel mt-6 p-6">
-              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a racket to add…" className="h-11" />
+              <Input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search a racket to add…"
+                className="h-11"
+              />
               <div className="mt-4 flex flex-wrap gap-2">
                 {options.map((r) => (
                   <button
@@ -98,13 +118,32 @@ function Compare() {
           )}
 
           {selected.length > 0 && (
-            <div className="panel mt-10 overflow-x-auto">
+            <div
+              className="mt-10 grid gap-4"
+              style={{ gridTemplateColumns: `repeat(${selected.length}, minmax(0, 1fr))` }}
+            >
+              {selected.map((r) => (
+                <RacketVisual
+                  key={r.id}
+                  label={racketName(r)}
+                  image={r.image}
+                  className="aspect-square"
+                />
+              ))}
+            </div>
+          )}
+
+          {selected.length > 0 && (
+            <div className="panel mt-6 overflow-x-auto">
               <table className="w-full min-w-[640px] text-sm">
                 <thead>
                   <tr className="border-b border-border">
                     <th className="p-4 text-left text-muted-foreground">Spec</th>
                     {selected.map((r) => (
-                      <th key={r.id} className="text-display p-4 text-left text-base font-extrabold">
+                      <th
+                        key={r.id}
+                        className="text-display p-4 text-left text-base font-extrabold"
+                      >
                         {racketName(r)}
                       </th>
                     ))}
@@ -131,10 +170,13 @@ function Compare() {
             <div className="panel mt-5 p-6">
               {!profile?.level ? (
                 <p className="text-muted-foreground">
-                  Complete the questionnaire first and RacketIQ will judge these frames against your own profile.
+                  Complete the questionnaire first and RacketIQ will judge these frames against your
+                  own profile.
                 </p>
               ) : selected.length < 2 ? (
-                <p className="text-muted-foreground">Add at least two rackets to see a personalized verdict.</p>
+                <p className="text-muted-foreground">
+                  Add at least two rackets to see a personalized verdict.
+                </p>
               ) : (
                 verdict && (
                   <div className="space-y-4">
