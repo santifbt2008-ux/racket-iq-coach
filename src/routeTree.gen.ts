@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as FindMyRacketRouteImport } from './routes/find-my-racket'
+import { Route as ModifyRouteImport } from './routes/modify'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as StringsRouteImport } from './routes/strings'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -49,6 +50,11 @@ const CompareRoute = CompareRouteImport.update({
 const FindMyRacketRoute = FindMyRacketRouteImport.update({
   id: '/find-my-racket',
   path: '/find-my-racket',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModifyRoute = ModifyRouteImport.update({
+  id: '/modify',
+  path: '/modify',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultsRoute = ResultsRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/modify': typeof ModifyRoute
   '/results': typeof ResultsRoute
   '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/modify': typeof ModifyRoute
   '/results': typeof ResultsRoute
   '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/modify': typeof ModifyRoute
   '/results': typeof ResultsRoute
   '/strings': typeof StringsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/compare'
     | '/find-my-racket'
+    | '/modify'
     | '/results'
     | '/strings'
     | '/admin'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/compare'
     | '/find-my-racket'
+    | '/modify'
     | '/results'
     | '/strings'
     | '/admin'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/compare'
     | '/find-my-racket'
+    | '/modify'
     | '/results'
     | '/strings'
     | '/_authenticated/admin'
@@ -173,6 +185,7 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   CompareRoute: typeof CompareRoute
   FindMyRacketRoute: typeof FindMyRacketRoute
+  ModifyRoute: typeof ModifyRoute
   ResultsRoute: typeof ResultsRoute
   StringsRoute: typeof StringsRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -222,6 +235,13 @@ declare module '@tanstack/react-router' {
       path: '/find-my-racket'
       fullPath: '/find-my-racket'
       preLoaderRoute: typeof FindMyRacketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/modify': {
+      id: '/modify'
+      path: '/modify'
+      fullPath: '/modify'
+      preLoaderRoute: typeof ModifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/results': {
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   CompareRoute: CompareRoute,
   FindMyRacketRoute: FindMyRacketRoute,
+  ModifyRoute: ModifyRoute,
   ResultsRoute: ResultsRoute,
   StringsRoute: StringsRoute,
   ApiChatRoute: ApiChatRoute,
