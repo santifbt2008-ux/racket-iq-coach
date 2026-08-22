@@ -1,12 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { DATA_DISCLAIMER } from "@/data/rackets";
-import type { RacketImage } from "@/data/racket-media";
+import { MessageCircle, Search, Settings2, Zap } from "lucide-react";
+import { CATALOG_DISCLAIMER } from "@/lib/racket-db";
 
-const nav = [
-  { to: "/find-my-racket", label: "Encuentra tu raqueta" },
+export const MAIN_NAV = [
+  { to: "/find-my-racket", label: "Encuentra tu raqueta", short: "Raqueta", icon: Search },
+  { to: "/strings", label: "Encuentra tus cuerdas y tensión", short: "Cuerdas", icon: Zap },
+  { to: "/modify", label: "Modifica tu raqueta", short: "Modifica", icon: Settings2 },
+  { to: "/chat", label: "Chatbot", short: "Chatbot", icon: MessageCircle },
+] as const;
+
+const SECONDARY_NAV = [
   { to: "/catalog", label: "Catálogo" },
-  { to: "/explore", label: "Explorar raquetas" },
   { to: "/compare", label: "Comparar" },
 ] as const;
 
@@ -21,7 +26,7 @@ export function SiteHeader() {
           <span className="text-display text-lg font-extrabold tracking-tight">RacketIQ</span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
-          {nav.map((n) => (
+          {SECONDARY_NAV.map((n) => (
             <Link
               key={n.to}
               to={n.to}
@@ -43,20 +48,47 @@ export function SiteHeader() {
   );
 }
 
+/** Primary app navigation, fixed to the bottom of the screen on every page. */
+export function BottomNav() {
+  return (
+    <nav
+      aria-label="Navegación principal"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border/70 bg-background/95 backdrop-blur-xl"
+    >
+      <ul className="mx-auto grid max-w-3xl grid-cols-4">
+        {MAIN_NAV.map((n) => (
+          <li key={n.to}>
+            <Link
+              to={n.to}
+              className="flex flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-primary" }}
+            >
+              <n.icon className="h-5 w-5" />
+              <span className="text-center leading-tight sm:hidden">{n.short}</span>
+              <span className="hidden text-center leading-tight sm:block">{n.label}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-border/70 py-10">
+    <footer className="mt-24 border-t border-border/70 py-10 pb-28">
       <div className="mx-auto max-w-6xl space-y-3 px-5 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <span className="text-display font-bold text-foreground">RacketIQ</span>
-          {nav.map((n) => (
+          {[...MAIN_NAV, ...SECONDARY_NAV].map((n) => (
             <Link key={n.to} to={n.to} className="hover:text-foreground">
               {n.label}
             </Link>
           ))}
         </div>
-        <p className="max-w-2xl text-xs">{DATA_DISCLAIMER}</p>
+        <p className="max-w-2xl text-xs">{CATALOG_DISCLAIMER}</p>
       </div>
+      <BottomNav />
     </footer>
   );
 }
@@ -72,22 +104,23 @@ export function RacketVisual({
 }: {
   label: string;
   className?: string;
-  image?: RacketImage | null;
+  image?: string | null;
 }) {
   if (image) {
     return (
       <figure
         className={`relative grid place-items-center overflow-hidden rounded-2xl border border-border bg-surface-strong ${className}`}
       >
-        <img src={image.url} alt={`Raqueta de tenis ${label}`} loading="lazy" className="h-full w-full object-contain p-6" />
-        <figcaption className="absolute bottom-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-          {image.credit}
-        </figcaption>
+        <img
+          src={image}
+          alt={`Raqueta de tenis ${label}`}
+          loading="lazy"
+          className="h-full w-full object-contain p-6"
+        />
       </figure>
     );
   }
   return (
-
     <div
       className={`court-grid relative grid place-items-center overflow-hidden rounded-2xl border border-border bg-surface-strong ${className}`}
       role="img"
@@ -109,7 +142,7 @@ export function RacketVisual({
         </g>
       </svg>
       <span className="absolute bottom-3 text-[10px] uppercase tracking-widest text-muted-foreground">
-        Imagen de marcador de posición
+        Sin imagen con licencia
       </span>
     </div>
   );
