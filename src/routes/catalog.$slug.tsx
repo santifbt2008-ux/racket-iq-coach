@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Page, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { getRacketBySlug } from "@/lib/rackets.functions";
 import { CATALOG_DISCLAIMER, STROKE_LABELS, racketFullName } from "@/lib/racket-db";
+import { formatMXN } from "@/lib/format";
 
 export const Route = createFileRoute("/catalog/$slug")({
   loader: async ({ params }) => {
@@ -12,13 +13,13 @@ export const Route = createFileRoute("/catalog/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Racket not found — RacketIQ" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Raqueta no encontrada — RacketIQ" }, { name: "robots", content: "noindex" }] };
     }
     const name = racketFullName(loaderData.racket);
-    const description = loaderData.racket.description ?? `Full specifications for the ${name}.`;
+    const description = loaderData.racket.description ?? `Especificaciones completas de la ${name}.`;
     return {
       meta: [
-        { title: `${name} — full specifications | RacketIQ` },
+        { title: `${name} — especificaciones completas | RacketIQ` },
         { name: "description", content: description.slice(0, 155) },
         { property: "og:title", content: `${name} — RacketIQ` },
         { property: "og:description", content: description.slice(0, 155) },
@@ -30,15 +31,15 @@ export const Route = createFileRoute("/catalog/$slug")({
   errorComponent: ({ error }) => (
     <Page>
       <p role="alert" className="text-muted-foreground">
-        Could not load this racket: {error.message}
+        No se pudo cargar esta raqueta: {error.message}
       </p>
     </Page>
   ),
   notFoundComponent: () => (
     <Page>
-      <h1 className="text-display text-3xl font-extrabold">Racket not found</h1>
+      <h1 className="text-display text-3xl font-extrabold">Raqueta no encontrada</h1>
       <Link to="/catalog" className="mt-4 inline-block text-primary underline">
-        Back to the catalog
+        Volver al catálogo
       </Link>
     </Page>
   ),
@@ -49,21 +50,21 @@ function RacketDetail() {
   const { racket: r } = Route.useLoaderData();
 
   const specs: [string, string][] = [
-    ["Racket type", r.racket_type ?? "—"],
-    ["Model year", r.year ? String(r.year) : "—"],
-    ["Head size", r.head_size ? `${r.head_size} sq in` : "—"],
-    ["Length", r.length ? `${r.length} in` : "—"],
-    ["Weight (strung)", r.weight ? `${r.weight} g` : "—"],
+    ["Tipo de raqueta", r.racket_type ?? "—"],
+    ["Año del modelo", r.year ? String(r.year) : "—"],
+    ["Tamaño de cabeza", r.head_size ? `${r.head_size} pulg²` : "—"],
+    ["Longitud", r.length ? `${r.length} in` : "—"],
+    ["Peso (encordada)", r.weight ? `${r.weight} g` : "—"],
     ["Balance", r.balance ? `${r.balance} cm` : "—"],
     ["Swingweight", r.swingweight ? String(r.swingweight) : "—"],
-    ["Stiffness", r.stiffness ? `${r.stiffness} RA` : "—"],
-    ["Beam width", r.beam_width ?? "—"],
-    ["String pattern", r.string_pattern ?? "—"],
-    ["Composition", r.composition ?? "—"],
-    ["Power level", r.power_level ?? "—"],
-    ["Swing speed", r.swing_speed ?? "—"],
-    ["Price", r.price != null ? `$${r.price}` : "—"],
-    ["Availability", r.is_current ? "Current model" : "Discontinued / older model"],
+    ["Rigidez", r.stiffness ? `${r.stiffness} RA` : "—"],
+    ["Ancho de aro", r.beam_width ?? "—"],
+    ["Patrón de encordado", r.string_pattern ?? "—"],
+    ["Composición", r.composition ?? "—"],
+    ["Nivel de potencia", r.power_level ?? "—"],
+    ["Velocidad de swing", r.swing_speed ?? "—"],
+    ["Precio", r.price != null ? formatMXN(r.price) : "—"],
+    ["Disponibilidad", r.is_current ? "Modelo actual" : "Descontinuada / modelo anterior"],
   ];
 
   const strokes = (r.stroke_style ?? "")
@@ -77,7 +78,7 @@ function RacketDetail() {
       <main>
         <Page>
           <Link to="/catalog" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Back to the catalog
+            ← Volver al catálogo
           </Link>
 
           <div className="mt-6 grid gap-10 md:grid-cols-[.85fr_1.15fr]">
@@ -88,7 +89,7 @@ function RacketDetail() {
                 <div className="text-center">
                   <span className="text-display text-5xl font-extrabold text-muted-foreground/30">{r.brand}</span>
                   <p className="mt-4 max-w-[220px] text-xs text-muted-foreground">
-                    No licensed photo available for this frame yet.
+                    Aún no hay foto con licencia disponible para esta raqueta.
                   </p>
                 </div>
               )}
@@ -99,7 +100,7 @@ function RacketDetail() {
               <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">{r.model}</h1>
               {r.description && <p className="mt-4 text-muted-foreground">{r.description}</p>}
 
-              <h2 className="mt-10 text-lg font-bold">Full specifications</h2>
+              <h2 className="mt-10 text-lg font-bold">Especificaciones completas</h2>
               <dl className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
                 {specs.map(([k, v]) => (
                   <div key={k} className="flex justify-between border-b border-border pb-2 text-sm">
@@ -111,7 +112,7 @@ function RacketDetail() {
 
               {strokes.length > 0 && (
                 <>
-                  <h2 className="mt-10 text-lg font-bold">Suited stroke styles</h2>
+                  <h2 className="mt-10 text-lg font-bold">Estilos de juego recomendados</h2>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {strokes.map((s) => (
                       <span key={s} className="rounded-full bg-secondary px-3 py-1.5 text-sm">
@@ -127,7 +128,7 @@ function RacketDetail() {
                   to="/find-my-racket"
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
                 >
-                  See if this fits your game <ArrowRight className="h-4 w-4" />
+                  Descubre si se ajusta a tu juego <ArrowRight className="h-4 w-4" />
                 </Link>
                 {r.product_url && (
                   <a
@@ -136,7 +137,7 @@ function RacketDetail() {
                     rel="noopener noreferrer nofollow"
                     className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 font-semibold hover:bg-secondary"
                   >
-                    View product <ArrowRight className="h-4 w-4" />
+                    Ver producto <ArrowRight className="h-4 w-4" />
                   </a>
                 )}
               </div>
