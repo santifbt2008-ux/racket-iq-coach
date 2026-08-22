@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { formatMXN } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  KEY_SPECS,
   POWER_LEVELS,
   RACKET_TYPES,
   STRING_PATTERNS,
