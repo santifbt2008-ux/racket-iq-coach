@@ -142,10 +142,17 @@ function toPayload(draft: Draft) {
     "image_url",
     "description",
     "product_url",
+    ...EXTRA_FIELDS,
   ] as const) {
-    const value = draft[key];
+    const value = draft[key as keyof Draft];
     payload[key] = value === "" || value === undefined ? null : value;
   }
+  payload["status"] = draft.is_current ?? true ? "current" : "discontinued";
+  payload["source_verified"] = draft.source_verified ?? false;
+  payload["incomplete_data"] = KEY_SPECS.some((k) => {
+    const v = payload[k] ?? draft[k];
+    return v === null || v === undefined || v === "";
+  });
   return payload;
 }
 
@@ -344,6 +351,7 @@ function Admin() {
                     ["price", "Precio (USD de referencia)"],
                     ["image_url", "URL de imagen (solo con licencia)"],
                     ["product_url", "URL del producto"],
+                    ...EXTRA_FIELDS.map((f) => [f, EXTRA_LABELS[f]] as const),
                   ] as const
                 ).map(([key, label]) => (
                   <div key={key}>
