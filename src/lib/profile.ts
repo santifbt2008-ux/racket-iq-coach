@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { PlayerType } from "@/data/rackets";
+import type { PlayerType } from "@/lib/racket-engine";
 
 export type Improvement =
   | "power"
@@ -51,7 +51,7 @@ export interface PlayerProfile {
   headSize: "95" | "98" | "100" | "102+" | "any" | "";
   weight: "u300" | "300-305" | "305-310" | "310+" | "any" | "";
   balance: "head-light" | "even" | "head-heavy" | "any" | "";
-  pattern: "16x19" | "18x20" | "any" | "";
+  pattern: string; // any pattern present in the catalog, or "any"
   gripSize: "4" | "4_1_8" | "4_1_4" | "4_3_8" | "4_1_2" | "unsure" | "";
   comfortSensitivity: "none" | "mild" | "significant" | "";
 
@@ -178,11 +178,20 @@ export const LEVEL_OPTIONS = [
   "Principiante",
   "Intermedio",
   "Avanzado",
-  "Jugador de torneos",
-  "UTR 4–6",
-  "UTR 6–8",
-  "UTR 8–10",
-  "UTR 10+",
+  "Competitivo",
+  "Profesional",
+];
+
+/** UTR is asked separately from level — a player can have any UTR at any level. */
+export const UTR_OPTIONS = [
+  "No la conozco",
+  "1–2",
+  "3–4",
+  "5–6",
+  "7–8",
+  "9–10",
+  "11–12",
+  "13+",
 ];
 
 export const IMPROVEMENT_LABELS: Record<Improvement, string> = {
