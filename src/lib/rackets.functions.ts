@@ -4,7 +4,7 @@ import type { Database } from "@/integrations/supabase/types";
 import type { RacketRow } from "./racket-db";
 
 const COLUMNS =
-  "id, slug, brand, model, year, racket_type, head_size, length, weight, balance, swingweight, stiffness, beam_width, string_pattern, composition, power_level, swing_speed, stroke_style, price, image_url, description, product_url, is_current, created_at";
+  "id, slug, brand, model, year, racket_type, head_size, length, weight, balance, swingweight, stiffness, beam_width, string_pattern, composition, power_level, swing_speed, stroke_style, price, image_url, description, product_url, is_current, created_at, generation, status, head_size_cm2, weight_unstrung, weight_strung, balance_points, mains, crosses, grip_sizes, recommended_tension, control_level, spin_level, comfort_level, maneuverability, recommended_player_level, recommended_play_style, manufacturer_url, source_url, source_verified, incomplete_data, updated_at";
 
 function publicClient() {
   return createClient<Database>(
