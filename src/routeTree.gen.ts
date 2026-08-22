@@ -19,8 +19,6 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CatalogIndexRouteImport } from './routes/catalog.index'
 import { Route as CatalogSlugRouteImport } from './routes/catalog.$slug'
-import { Route as ExploreIndexRouteImport } from './routes/explore.index'
-import { Route as ExploreRacketIdRouteImport } from './routes/explore.$racketId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -71,16 +69,6 @@ const CatalogSlugRoute = CatalogSlugRouteImport.update({
   path: '/catalog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreIndexRoute = ExploreIndexRouteImport.update({
-  id: '/explore/',
-  path: '/explore/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExploreRacketIdRoute = ExploreRacketIdRouteImport.update({
-  id: '/explore/$racketId',
-  path: '/explore/$racketId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,9 +79,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
-  '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog/': typeof CatalogIndexRoute
-  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -104,9 +90,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
-  '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog': typeof CatalogIndexRoute
-  '/explore': typeof ExploreIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,9 +103,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
-  '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog/': typeof CatalogIndexRoute
-  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -134,9 +116,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/chat'
     | '/catalog/$slug'
-    | '/explore/$racketId'
     | '/catalog/'
-    | '/explore/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -147,9 +127,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/chat'
     | '/catalog/$slug'
-    | '/explore/$racketId'
     | '/catalog'
-    | '/explore'
   id:
     | '__root__'
     | '/'
@@ -161,9 +139,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/api/chat'
     | '/catalog/$slug'
-    | '/explore/$racketId'
     | '/catalog/'
-    | '/explore/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -175,9 +151,7 @@ export interface RootRouteChildren {
   ResultsRoute: typeof ResultsRoute
   ApiChatRoute: typeof ApiChatRoute
   CatalogSlugRoute: typeof CatalogSlugRoute
-  ExploreRacketIdRoute: typeof ExploreRacketIdRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
-  ExploreIndexRoute: typeof ExploreIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,20 +226,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore/': {
-      id: '/explore/'
-      path: '/explore'
-      fullPath: '/explore/'
-      preLoaderRoute: typeof ExploreIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore/$racketId': {
-      id: '/explore/$racketId'
-      path: '/explore/$racketId'
-      fullPath: '/explore/$racketId'
-      preLoaderRoute: typeof ExploreRacketIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -289,9 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResultsRoute: ResultsRoute,
   ApiChatRoute: ApiChatRoute,
   CatalogSlugRoute: CatalogSlugRoute,
-  ExploreRacketIdRoute: ExploreRacketIdRoute,
   CatalogIndexRoute: CatalogIndexRoute,
-  ExploreIndexRoute: ExploreIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
