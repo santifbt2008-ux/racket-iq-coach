@@ -14,16 +14,123 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      rackets: {
+        Row: {
+          balance: number | null
+          beam_width: string | null
+          brand: string
+          composition: string | null
+          created_at: string
+          description: string | null
+          head_size: number | null
+          id: string
+          image_url: string | null
+          is_current: boolean
+          length: number | null
+          model: string
+          power_level: string | null
+          price: number | null
+          product_url: string | null
+          racket_type: string | null
+          slug: string
+          stiffness: number | null
+          string_pattern: string | null
+          stroke_style: string | null
+          swing_speed: string | null
+          swingweight: number | null
+          weight: number | null
+          year: number | null
+        }
+        Insert: {
+          balance?: number | null
+          beam_width?: string | null
+          brand: string
+          composition?: string | null
+          created_at?: string
+          description?: string | null
+          head_size?: number | null
+          id?: string
+          image_url?: string | null
+          is_current?: boolean
+          length?: number | null
+          model: string
+          power_level?: string | null
+          price?: number | null
+          product_url?: string | null
+          racket_type?: string | null
+          slug: string
+          stiffness?: number | null
+          string_pattern?: string | null
+          stroke_style?: string | null
+          swing_speed?: string | null
+          swingweight?: number | null
+          weight?: number | null
+          year?: number | null
+        }
+        Update: {
+          balance?: number | null
+          beam_width?: string | null
+          brand?: string
+          composition?: string | null
+          created_at?: string
+          description?: string | null
+          head_size?: number | null
+          id?: string
+          image_url?: string | null
+          is_current?: boolean
+          length?: number | null
+          model?: string
+          power_level?: string | null
+          price?: number | null
+          product_url?: string | null
+          racket_type?: string | null
+          slug?: string
+          stiffness?: number | null
+          string_pattern?: string | null
+          stroke_style?: string | null
+          swing_speed?: string | null
+          swingweight?: number | null
+          weight?: number | null
+          year?: number | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +257,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
