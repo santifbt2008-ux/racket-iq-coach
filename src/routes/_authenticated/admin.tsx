@@ -411,6 +411,14 @@ function Admin() {
                   />
                   Modelo actual
                 </label>
+                <label className="flex items-end gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={draft.source_verified ?? false}
+                    onChange={(e) => setDraft({ ...draft, source_verified: e.target.checked })}
+                  />
+                  Fuente verificada
+                </label>
               </div>
               <div>
                 <label htmlFor="description" className="mb-1.5 block text-xs text-muted-foreground">
