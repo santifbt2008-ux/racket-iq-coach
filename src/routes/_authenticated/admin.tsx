@@ -5,6 +5,7 @@ import { Pencil, Plus, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Page, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Input } from "@/components/ui/input";
+import { formatMXN } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import {
   POWER_LEVELS,
@@ -142,7 +143,7 @@ function Admin() {
       }
     },
     onSuccess: () => {
-      toast.success("Racket saved");
+      toast.success("Raqueta guardada");
       setDraft(null);
       invalidate();
     },
@@ -155,7 +156,7 @@ function Admin() {
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
-      toast.success("Racket deleted");
+      toast.success("Raqueta eliminada");
       invalidate();
     },
     onError: (e: Error) => toast.error(e.message),
@@ -171,12 +172,12 @@ function Admin() {
       return payloads.length;
     },
     onSuccess: (count) => {
-      toast.success(`Imported ${count} rackets`);
+      toast.success(`Se importaron ${count} raquetas`);
       setImportText("");
       setShowImport(false);
       invalidate();
     },
-    onError: (e: Error) => toast.error(`Import failed: ${e.message}`),
+    onError: (e: Error) => toast.error(`Error al importar: ${e.message}`),
   });
 
   const filtered = useMemo(() => {
@@ -197,9 +198,9 @@ function Admin() {
         <Page>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Admin</p>
-              <h1 className="text-display mt-3 text-4xl font-extrabold">Racket catalog manager</h1>
-              <p className="mt-2 text-sm text-muted-foreground">{rackets.length} records in the database.</p>
+              <p className="eyebrow">Administración</p>
+              <h1 className="text-display mt-3 text-4xl font-extrabold">Gestor del catálogo de raquetas</h1>
+              <p className="mt-2 text-sm text-muted-foreground">{rackets.length} registros en la base de datos.</p>
             </div>
             <div className="flex gap-3">
               <button
@@ -207,34 +208,34 @@ function Admin() {
                 onClick={() => setShowImport((v) => !v)}
                 className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-secondary"
               >
-                <Upload className="h-4 w-4" /> Import
+                <Upload className="h-4 w-4" /> Importar
               </button>
               <button
                 type="button"
                 onClick={() => setDraft({ ...EMPTY })}
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
               >
-                <Plus className="h-4 w-4" /> New racket
+                <Plus className="h-4 w-4" /> Nueva raqueta
               </button>
               <button type="button" onClick={signOut} className="text-sm text-muted-foreground underline">
-                Sign out
+                Cerrar sesión
               </button>
             </div>
           </div>
 
           {isAdmin === false && (
             <div className="panel mt-8 p-6 text-sm text-muted-foreground">
-              Your account is signed in but does not have the <strong className="text-foreground">admin</strong> role, so
-              saving changes will be rejected. Ask an owner to grant your account admin access.
+              Tu cuenta tiene la sesión iniciada pero no cuenta con el rol de <strong className="text-foreground">admin</strong>, por lo que
+              los cambios que guardes serán rechazados. Pide a un propietario que otorgue acceso de administrador a tu cuenta.
             </div>
           )}
 
           {showImport && (
             <div className="panel mt-8 space-y-3 p-6">
-              <h2 className="font-bold">Bulk import</h2>
+              <h2 className="font-bold">Importación masiva</h2>
               <p className="text-sm text-muted-foreground">
-                Paste a JSON array of racket objects (fields match the table columns). Existing rows with the same slug
-                are updated. Only import data you have the right to use.
+                Pega un arreglo JSON de objetos de raqueta (los campos coinciden con las columnas de la tabla). Las filas existentes con el mismo slug
+                se actualizarán. Importa solo datos que tengas derecho a usar.
               </p>
               <textarea
                 value={importText}
@@ -249,7 +250,7 @@ function Admin() {
                 onClick={() => bulkImport.mutate(importText)}
                 className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
               >
-                {bulkImport.isPending ? "Importing…" : "Import records"}
+                {bulkImport.isPending ? "Importando…" : "Importar registros"}
               </button>
             </div>
           )}
@@ -262,25 +263,25 @@ function Admin() {
               }}
               className="panel mt-8 space-y-4 p-6"
             >
-              <h2 className="font-bold">{draft.id ? "Edit racket" : "New racket"}</h2>
+              <h2 className="font-bold">{draft.id ? "Editar raqueta" : "Nueva raqueta"}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {(
                   [
-                    ["brand", "Brand"],
-                    ["model", "Model"],
-                    ["year", "Year"],
-                    ["head_size", "Head size (sq in)"],
-                    ["length", "Length (in)"],
-                    ["weight", "Weight (g)"],
+                    ["brand", "Marca"],
+                    ["model", "Modelo"],
+                    ["year", "Año"],
+                    ["head_size", "Tamaño de cabeza (pulg²)"],
+                    ["length", "Longitud (pulg)"],
+                    ["weight", "Peso (g)"],
                     ["balance", "Balance (cm)"],
                     ["swingweight", "Swingweight"],
-                    ["stiffness", "Stiffness (RA)"],
-                    ["beam_width", "Beam width"],
-                    ["composition", "Composition"],
-                    ["stroke_style", "Stroke style"],
-                    ["price", "Price (USD)"],
-                    ["image_url", "Image URL (licensed only)"],
-                    ["product_url", "Product URL"],
+                    ["stiffness", "Rigidez (RA)"],
+                    ["beam_width", "Ancho de perfil"],
+                    ["composition", "Composición"],
+                    ["stroke_style", "Estilo de golpe"],
+                    ["price", "Precio (USD de referencia)"],
+                    ["image_url", "URL de imagen (solo con licencia)"],
+                    ["product_url", "URL del producto"],
                   ] as const
                 ).map(([key, label]) => (
                   <div key={key}>
@@ -337,12 +338,12 @@ function Admin() {
                     checked={draft.is_current ?? true}
                     onChange={(e) => setDraft({ ...draft, is_current: e.target.checked })}
                   />
-                  Current model
+                  Modelo actual
                 </label>
               </div>
               <div>
                 <label htmlFor="description" className="mb-1.5 block text-xs text-muted-foreground">
-                  Description
+                  Descripción
                 </label>
                 <textarea
                   id="description"
@@ -358,14 +359,14 @@ function Admin() {
                   disabled={save.isPending}
                   className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
                 >
-                  {save.isPending ? "Saving…" : "Save racket"}
+                  {save.isPending ? "Guardando…" : "Guardar raqueta"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setDraft(null)}
                   className="rounded-full border border-border px-6 py-2.5 text-sm font-semibold"
                 >
-                  Cancel
+                  Cancelar
                 </button>
               </div>
             </form>
@@ -375,20 +376,20 @@ function Admin() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Filter records…"
+              placeholder="Filtrar registros…"
               className="h-11 max-w-sm"
-              aria-label="Filter racket records"
+              aria-label="Filtrar registros de raquetas"
             />
             <div className="panel mt-4 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                   <tr className="border-b border-border">
-                    <th className="p-4">Racket</th>
-                    <th className="p-4">Type</th>
-                    <th className="p-4">Head</th>
-                    <th className="p-4">Weight</th>
-                    <th className="p-4">Price</th>
-                    <th className="p-4">Status</th>
+                    <th className="p-4">Raqueta</th>
+                    <th className="p-4">Tipo</th>
+                    <th className="p-4">Cabeza</th>
+                    <th className="p-4">Peso</th>
+                    <th className="p-4">Precio</th>
+                    <th className="p-4">Estado</th>
                     <th className="p-4" />
                   </tr>
                 </thead>
@@ -396,7 +397,7 @@ function Admin() {
                   {isLoading && (
                     <tr>
                       <td className="p-4 text-muted-foreground" colSpan={7}>
-                        Loading…
+                        Cargando…
                       </td>
                     </tr>
                   )}
@@ -410,13 +411,13 @@ function Admin() {
                       <td className="p-4 text-muted-foreground">{r.racket_type}</td>
                       <td className="p-4 text-muted-foreground">{r.head_size}</td>
                       <td className="p-4 text-muted-foreground">{r.weight}g</td>
-                      <td className="p-4 text-muted-foreground">{r.price != null ? `$${r.price}` : "—"}</td>
-                      <td className="p-4 text-muted-foreground">{r.is_current ? "Current" : "Older"}</td>
+                      <td className="p-4 text-muted-foreground">{r.price != null ? formatMXN(r.price) : "—"}</td>
+                      <td className="p-4 text-muted-foreground">{r.is_current ? "Actual" : "Anterior"}</td>
                       <td className="p-4">
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
-                            aria-label={`Edit ${racketFullName(r)}`}
+                            aria-label={`Editar ${racketFullName(r)}`}
                             onClick={() => setDraft({ ...r })}
                             className="rounded-full border border-border p-2 hover:bg-secondary"
                           >
@@ -424,9 +425,9 @@ function Admin() {
                           </button>
                           <button
                             type="button"
-                            aria-label={`Delete ${racketFullName(r)}`}
+                            aria-label={`Eliminar ${racketFullName(r)}`}
                             onClick={() => {
-                              if (confirm(`Delete ${racketFullName(r)}?`)) remove.mutate(r.id);
+                              if (confirm(`¿Eliminar ${racketFullName(r)}?`)) remove.mutate(r.id);
                             }}
                             className="rounded-full border border-border p-2 text-destructive hover:bg-secondary"
                           >

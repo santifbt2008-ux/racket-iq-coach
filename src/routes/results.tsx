@@ -10,16 +10,16 @@ import { useStoredProfile } from "@/lib/profile";
 export const Route = createFileRoute("/results")({
   head: () => ({
     meta: [
-      { title: "Your RacketIQ Match — personalized racket results" },
+      { title: "Tu Match de RacketIQ — resultados personalizados de raqueta" },
       {
         name: "description",
         content:
-          "Your top 3 racket matches, transparent match scores, and a personalized string and setup plan.",
+          "Tus 3 mejores raquetas, puntajes de coincidencia transparentes y un plan personalizado de encordado y configuración.",
       },
-      { property: "og:title", content: "Your RacketIQ Match" },
+      { property: "og:title", content: "Tu Match de RacketIQ" },
       {
         property: "og:description",
-        content: "Top racket matches, match-score breakdown and a personalized setup.",
+        content: "Las mejores raquetas para ti, desglose del puntaje de coincidencia y una configuración personalizada.",
       },
     ],
   }),
@@ -27,9 +27,9 @@ export const Route = createFileRoute("/results")({
 });
 
 const PHASES = [
-  "Analyzing your game...",
-  "Comparing your profile against our racket database...",
-  "Building your personalized setup...",
+  "Analizando tu juego...",
+  "Comparando tu perfil con nuestra base de datos de raquetas...",
+  "Construyendo tu configuración personalizada...",
 ];
 
 function Results() {
@@ -55,15 +55,15 @@ function Results() {
         <SiteHeader />
         <Page>
           <div className="panel mx-auto max-w-lg p-10 text-center">
-            <h1 className="text-display text-3xl font-extrabold">No profile yet</h1>
+            <h1 className="text-display text-3xl font-extrabold">Aún no tienes un perfil</h1>
             <p className="mt-3 text-muted-foreground">
-              Complete the questionnaire and RacketIQ will build your personalized match.
+              Completa el cuestionario y RacketIQ construirá tu match personalizado.
             </p>
             <Link
               to="/find-my-racket"
               className="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
             >
-              Find My Racket <ArrowRight className="h-4 w-4" />
+              Encuentra Mi Raqueta <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </Page>
@@ -107,13 +107,13 @@ function Results() {
         <Page>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Your RacketIQ Match</p>
+              <p className="eyebrow">Tu Match de RacketIQ</p>
               <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">
-                Built from {profile.level.toLowerCase()} answers, not averages.
+                Construido a partir de tus respuestas de nivel {profile.level.toLowerCase()}, no de promedios.
               </h1>
               {current && (
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Currently playing: {racketName(current)}
+                  Actualmente juegas con: {racketName(current)}
                 </p>
               )}
             </div>
@@ -121,7 +121,7 @@ function Results() {
               to="/find-my-racket"
               className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-secondary"
             >
-              <RotateCcw className="h-4 w-4" /> Retake questionnaire
+              <RotateCcw className="h-4 w-4" /> Repetir cuestionario
             </Link>
           </div>
 
@@ -134,7 +134,7 @@ function Results() {
             />
             <div>
               <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-widest text-primary-foreground">
-                #1 Match
+                Match #1
               </span>
               <h2 className="text-display mt-5 text-4xl font-extrabold">
                 {racketName(top.racket)}
@@ -148,25 +148,25 @@ function Results() {
                   {top.overall}%
                 </span>
                 <span className="text-sm uppercase tracking-widest text-muted-foreground">
-                  Match
+                  Coincidencia
                 </span>
               </div>
 
-              <h3 className="mt-8 text-lg font-bold">Key specifications</h3>
+              <h3 className="mt-8 text-lg font-bold">Especificaciones clave</h3>
               <dl className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
                 {(
                   [
-                    ["Head size", `${top.racket.head_size} sq in`],
-                    ["Weight (strung)", `${top.racket.strung_weight} g`],
-                    ["Weight (unstrung)", `${top.racket.unstrung_weight} g`],
+                    ["Tamaño de cabeza", `${top.racket.head_size} sq in`],
+                    ["Peso (encordada)", `${top.racket.strung_weight} g`],
+                    ["Peso (sin encordar)", `${top.racket.unstrung_weight} g`],
                     ["Balance", `${top.racket.balance} cm`],
                     ["Swingweight", `${top.racket.swingweight}`],
-                    ["Beam", `${top.racket.beam} mm`],
-                    ["String pattern", top.racket.string_pattern],
-                    ["Stiffness", `${top.racket.stiffness} RA`],
-                    ["Rec. tension", `${top.racket.tension_min}–${top.racket.tension_max} lbs`],
-                    ["Composition", top.racket.composition],
-                    ["Forgiveness (est.)", `${top.racket.forgiveness_score}/10`],
+                    ["Aro (beam)", `${top.racket.beam} mm`],
+                    ["Patrón de encordado", top.racket.string_pattern],
+                    ["Rigidez", `${top.racket.stiffness} RA`],
+                    ["Tensión rec.", `${top.racket.tension_min}–${top.racket.tension_max} lbs`],
+                    ["Composición", top.racket.composition],
+                    ["Tolerancia (est.)", `${top.racket.forgiveness_score}/10`],
                   ] as [string, string][]
                 ).map(([k, v]) => (
                   <div
@@ -179,7 +179,7 @@ function Results() {
                 ))}
               </dl>
 
-              <h3 className="mt-8 text-lg font-bold">Why it fits your game</h3>
+              <h3 className="mt-8 text-lg font-bold">Por qué encaja con tu juego</h3>
               <ul className="mt-3 space-y-3">
                 {top.reasons.map((r) => (
                   <li key={r} className="flex gap-3 text-sm text-muted-foreground">
@@ -194,7 +194,7 @@ function Results() {
                   params={{ racketId: top.racket.id }}
                   className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
                 >
-                  View full specifications <ArrowRight className="h-4 w-4" />
+                  Ver especificaciones completas <ArrowRight className="h-4 w-4" />
                 </Link>
                 {top.racket.product_link && (
                   <a
@@ -215,11 +215,11 @@ function Results() {
 
           {/* Match score breakdown */}
           <section className="mt-14">
-            <h2 className="text-display text-3xl font-extrabold">Match score breakdown</h2>
+            <h2 className="text-display text-3xl font-extrabold">Desglose del puntaje de coincidencia</h2>
             <div className="panel mt-6 p-6 md:p-8">
               <div className="mb-6 flex items-baseline gap-3 border-b border-border pb-6">
                 <span className="text-sm uppercase tracking-widest text-muted-foreground">
-                  Overall Match
+                  Coincidencia General
                 </span>
                 <span className="text-display text-3xl font-extrabold text-primary">
                   {top.overall}%
@@ -231,19 +231,19 @@ function Results() {
                 ))}
               </div>
               <p className="mt-6 text-xs text-muted-foreground">
-                Scores are computed by comparing your answers against each racket's attributes in
-                our database, weighted by the priorities you set. {DATA_DISCLAIMER}
+                Los puntajes se calculan comparando tus respuestas con los atributos de cada raqueta en
+                nuestra base de datos, ponderados según las prioridades que definiste. {DATA_DISCLAIMER}
               </p>
             </div>
           </section>
 
           {/* Runners up */}
           <section className="mt-14">
-            <h2 className="text-display text-3xl font-extrabold">Also strong for you</h2>
+            <h2 className="text-display text-3xl font-extrabold">También son buenas opciones para ti</h2>
             <div className="mt-6 grid gap-5 md:grid-cols-2">
               {[second, third].filter(Boolean).map((m, i) => (
                 <div key={m!.racket.id} className="panel flex flex-col p-6">
-                  <span className="eyebrow">#{i + 2} Match</span>
+                  <span className="eyebrow">Match #{i + 2}</span>
                   <h3 className="text-display mt-3 text-2xl font-extrabold">
                     {racketName(m!.racket)}
                   </h3>
@@ -257,7 +257,7 @@ function Results() {
                     params={{ racketId: m!.racket.id }}
                     className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-secondary"
                   >
-                    View Details <ArrowRight className="h-4 w-4" />
+                    Ver Detalles <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
               ))}
@@ -266,15 +266,15 @@ function Results() {
 
           {/* String setup */}
           <section className="mt-14">
-            <h2 className="text-display text-3xl font-extrabold">Your Recommended Setup</h2>
+            <h2 className="text-display text-3xl font-extrabold">Tu Configuración Recomendada</h2>
             <div className="panel mt-6 grid gap-6 p-6 md:grid-cols-3 md:p-8">
-              <Stat label="String" value={stringSetup.string} sub={stringSetup.type} />
+              <Stat label="Encordado" value={stringSetup.string} sub={stringSetup.type} />
               <Stat
-                label="Gauge"
+                label="Calibre"
                 value={stringSetup.gauge}
-                sub="Thinner = more spin, shorter life"
+                sub="Más delgado = más efecto, menor duración"
               />
-              <Stat label="Tension" value={stringSetup.tension} sub="Range, not a single number" />
+              <Stat label="Tensión" value={stringSetup.tension} sub="Un rango, no un número único" />
               <div className="md:col-span-3">
                 <p className="text-sm text-muted-foreground">{stringSetup.rationale}</p>
                 <ul className="mt-4 space-y-2">
@@ -291,16 +291,16 @@ function Results() {
 
           {/* Grip, overgrip & dampener */}
           <section className="mt-14">
-            <h2 className="text-display text-3xl font-extrabold">Grip & Accessories</h2>
+            <h2 className="text-display text-3xl font-extrabold">Grip y Accesorios</h2>
             <div className="panel mt-6 grid gap-6 p-6 md:grid-cols-3 md:p-8">
-              <Stat label="Grip size" value={grip.size} sub={grip.rationale} />
+              <Stat label="Tamaño de grip" value={grip.size} sub={grip.rationale} />
               <Stat
                 label="Overgrip"
                 value={grip.overgrip.split(" — ")[0] ?? grip.overgrip}
                 sub={grip.overgrip.split(" — ")[1] ?? ""}
               />
               <Stat
-                label="Dampener"
+                label="Amortiguador"
                 value={grip.dampener.split(" — ")[0] ?? grip.dampener}
                 sub={grip.dampener.split(" — ")[1] ?? ""}
               />
@@ -309,7 +309,7 @@ function Results() {
 
           {/* Customization */}
           <section className="mt-14">
-            <h2 className="text-display text-3xl font-extrabold">Should You Customize It?</h2>
+            <h2 className="text-display text-3xl font-extrabold">¿Deberías Personalizarla?</h2>
             <div className="panel mt-6 p-6 md:p-8">
               <p className="text-muted-foreground">{custom.summary}</p>
               {custom.needed && (
@@ -320,7 +320,7 @@ function Results() {
                       className="rounded-xl border border-border bg-surface-strong p-5"
                     >
                       <p className="font-semibold">{s.item}</p>
-                      <p className="mt-2 text-sm text-muted-foreground">Goal: {s.goal}</p>
+                      <p className="mt-2 text-sm text-muted-foreground">Objetivo: {s.goal}</p>
                     </div>
                   ))}
                 </div>
@@ -333,13 +333,13 @@ function Results() {
               to="/compare"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
             >
-              Compare these rackets <ArrowRight className="h-4 w-4" />
+              Comparar estas raquetas <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/explore"
               className="inline-flex items-center rounded-full border border-border px-6 py-3 font-semibold hover:bg-secondary"
             >
-              Explore Rackets
+              Explorar Raquetas
             </Link>
           </div>
         </Page>
