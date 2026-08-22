@@ -1,219 +1,304 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { X } from "lucide-react";
-import { Page, RacketVisual, SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { Input } from "@/components/ui/input";
-import { DATA_DISCLAIMER, RACKETS, getRacket, racketName } from "@/data/rackets";
+import { Page, ScoreBar, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { useRackets } from "@/lib/use-rackets";
+import { DERIVED_NOTE, racketName, type EngineRacket } from "@/lib/racket-engine";
 import { compareForPlayer } from "@/lib/engine";
+import { useStoredProfile } from "@/lib/profile";
+import { STRING_CATEGORIES, STRINGS_DISCLAIMER } from "@/lib/strings-db";
+import { CATALOG_DISCLAIMER } from "@/lib/racket-db";
 import { formatMXN } from "@/lib/format";
-import { STYLE_LABELS, useStoredProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/compare")({
   head: () => ({
     meta: [
-      { title: "Comparar Raquetas — especificaciones lado a lado | RacketIQ" },
+      { title: "Comparar raquetas y cuerdas — RacketIQ" },
       {
         name: "description",
         content:
-          "Compara hasta tres raquetas de tenis especificación por especificación y descubre cuál se ajusta mejor a tu perfil de juego.",
+          "Compara hasta tres raquetas especificación por especificación, o compara categorías de cuerda, con los datos reales del catálogo.",
       },
-      { property: "og:title", content: "Comparar Raquetas — RacketIQ" },
+      { property: "og:title", content: "Comparar raquetas y cuerdas — RacketIQ" },
       {
         property: "og:description",
-        content: "Especificaciones de raquetas lado a lado y un veredicto personalizado.",
+        content: "Comparación lado a lado de raquetas y cuerdas con datos verificados.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Compare,
+  component: ComparePage,
 });
 
-const ROWS = [
-  ["Tamaño de cabeza", (r: (typeof RACKETS)[number]) => `${r.head_size} pulg²`],
-  ["Peso", (r: (typeof RACKETS)[number]) => `${r.weight} g`],
-  ["Balance", (r: (typeof RACKETS)[number]) => `${r.balance} cm`],
-  ["Swingweight", (r: (typeof RACKETS)[number]) => `${r.swingweight}`],
-  ["Patrón de encordado", (r: (typeof RACKETS)[number]) => r.string_pattern],
-  ["Aro (grosor)", (r: (typeof RACKETS)[number]) => `${r.beam} mm`],
-  ["Rigidez", (r: (typeof RACKETS)[number]) => `${r.stiffness} RA`],
-  ["Potencia", (r: (typeof RACKETS)[number]) => `${r.power_score}/10`],
-  ["Control", (r: (typeof RACKETS)[number]) => `${r.control_score}/10`],
-  ["Efecto", (r: (typeof RACKETS)[number]) => `${r.spin_score}/10`],
-  ["Estabilidad", (r: (typeof RACKETS)[number]) => `${r.stability_score}/10`],
-  ["Maniobrabilidad", (r: (typeof RACKETS)[number]) => `${r.maneuverability_score}/10`],
-  ["Tolerancia (est.)", (r: (typeof RACKETS)[number]) => `${r.forgiveness_score}/10`],
-  ["Precio indicativo", (r: (typeof RACKETS)[number]) => formatMXN(r.price)],
-  [
-    "Tipo de jugador recomendado",
-    (r: (typeof RACKETS)[number]) =>
-      r.recommended_player_types.map((t) => STYLE_LABELS[t]).join(", "),
-  ],
-] as const;
+const SPECS: { label: string; get: (r: EngineRacket) => string }[] = [
+  { label: "Marca", get: (r) => r.brand },
+  { label: "Año", get: (r) => (r.year != null ? String(r.year) : "Sin dato") },
+  { label: "Tipo", get: (r) => r.racket_type ?? "Sin dato" },
+  { label: "Head size", get: (r) => (r.head_size != null ? `${r.head_size} in²` : "Sin dato") },
+  { label: "Peso", get: (r) => (r.weight != null ? `${r.weight} g` : "Sin dato") },
+  { label: "Balance", get: (r) => (r.balance != null ? `${r.balance} cm` : "Sin dato") },
+  { label: "Swingweight", get: (r) => (r.swingweight != null ? String(r.swingweight) : "Sin dato") },
+  { label: "Rigidez (RA)", get: (r) => (r.stiffness != null ? String(r.stiffness) : "Sin dato") },
+  { label: "Perfil", get: (r) => r.beam ?? "Sin dato" },
+  { label: "Patrón", get: (r) => r.string_pattern ?? "Sin dato" },
+  { label: "Largo", get: (r) => (r.length != null ? `${r.length} in` : "Sin dato") },
+  { label: "Composición", get: (r) => r.composition ?? "Sin dato" },
+  {
+    label: "Tipo de jugador",
+    get: (r) => (r.recommended_player_types.length ? r.recommended_player_types.join(", ") : "Sin dato"),
+  },
+  { label: "Potencia (estimada)", get: (r) => `${r.power_score}/10` },
+  { label: "Control (estimado)", get: (r) => `${r.control_score}/10` },
+  { label: "Efecto (estimado)", get: (r) => `${r.spin_score}/10` },
+  { label: "Estabilidad (estimada)", get: (r) => `${r.stability_score}/10` },
+  { label: "Maniobrabilidad (estimada)", get: (r) => `${r.maneuverability_score}/10` },
+  { label: "Comodidad (estimada)", get: (r) => `${r.comfort_score}/10` },
+  { label: "Precio", get: (r) => (r.price != null ? formatMXN(r.price) : "Sin dato") },
+];
 
-function Compare() {
-  const { profile } = useStoredProfile();
-  const [ids, setIds] = useState<string[]>([]);
-  const [q, setQ] = useState("");
-
-  const selected = ids.map((id) => getRacket(id)!).filter(Boolean);
-  const options = useMemo(() => {
-    const term = q.trim().toLowerCase();
-    return RACKETS.filter(
-      (r) => !ids.includes(r.id) && (!term || racketName(r).toLowerCase().includes(term)),
-    ).slice(0, 8);
-  }, [q, ids]);
-
-  const verdict = useMemo(
-    () =>
-      profile && profile.level && selected.length >= 2 ? compareForPlayer(profile, selected) : null,
-    [profile, selected],
-  );
-
+function ComparePage() {
+  const [mode, setMode] = useState<"rackets" | "strings">("rackets");
   return (
     <>
       <SiteHeader />
       <main>
         <Page>
-          <p className="eyebrow">Cara a cara</p>
-          <h1 className="text-display mt-3 text-4xl font-extrabold sm:text-5xl">
-            Compara hasta 3 raquetas
-          </h1>
+          <p className="eyebrow">Comparar</p>
+          <h1 className="text-display mt-3 text-4xl font-extrabold">Compara opciones</h1>
+          <div className="mt-6 flex gap-2">
+            {(
+              [
+                ["rackets", "Raqueta vs raqueta"],
+                ["strings", "Cuerda vs cuerda"],
+              ] as const
+            ).map(([v, l]) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setMode(v)}
+                className={`rounded-full border px-5 py-2.5 text-sm font-semibold ${
+                  mode === v
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground"
+                }`}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+          {mode === "rackets" ? <RacketCompare /> : <StringCompare />}
+        </Page>
+      </main>
+      <SiteFooter />
+    </>
+  );
+}
 
-          <div className="mt-8 flex flex-wrap gap-2">
+function RacketCompare() {
+  const { rackets, isLoading } = useRackets();
+  const { profile } = useStoredProfile();
+  const [ids, setIds] = useState<string[]>([]);
+  const [q, setQ] = useState("");
+
+  const selected = ids
+    .map((id) => rackets.find((r) => r.id === id))
+    .filter((r): r is EngineRacket => !!r);
+
+  const options = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    const pool = s
+      ? rackets.filter((r) => racketName(r).toLowerCase().includes(s))
+      : rackets;
+    return pool.filter((r) => !ids.includes(r.id)).slice(0, 8);
+  }, [rackets, q, ids]);
+
+  const verdict = useMemo(
+    () => (profile && selected.length >= 2 ? compareForPlayer(profile, selected) : null),
+    [profile, selected],
+  );
+
+  return (
+    <>
+      <div className="panel mt-8 p-6">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Busca una raqueta por marca o modelo…"
+          aria-label="Buscar raqueta"
+          className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm outline-none focus:border-primary"
+        />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {isLoading && <span className="text-sm text-muted-foreground">Cargando catálogo…</span>}
+          {options.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              disabled={ids.length >= 3}
+              onClick={() => setIds((v) => [...v, r.id])}
+              className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground disabled:opacity-40"
+            >
+              + {racketName(r)}
+            </button>
+          ))}
+        </div>
+        {selected.length > 0 && (
+          <div className="mt-5 flex flex-wrap gap-2">
             {selected.map((r) => (
               <span
                 key={r.id}
-                className="flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
               >
                 {racketName(r)}
                 <button
                   type="button"
-                  onClick={() => setIds(ids.filter((x) => x !== r.id))}
-                  aria-label="Eliminar"
+                  aria-label={`Quitar ${racketName(r)}`}
+                  onClick={() => setIds((v) => v.filter((x) => x !== r.id))}
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </span>
             ))}
           </div>
+        )}
+        <p className="mt-3 text-xs text-muted-foreground">Puedes comparar hasta 3 raquetas.</p>
+      </div>
 
-          {ids.length < 3 && (
-            <div className="panel mt-6 p-6">
-              <Input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Busca una raqueta para agregar…"
-                className="h-11"
-              />
-              <div className="mt-4 flex flex-wrap gap-2">
-                {options.map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => setIds([...ids, r.id])}
-                    className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    + {racketName(r)}
-                  </button>
+      {selected.length >= 2 && (
+        <div className="panel mt-8 overflow-x-auto p-6 md:p-8">
+          <table className="w-full min-w-[540px] text-sm">
+            <thead>
+              <tr className="border-b border-border text-left">
+                <th className="pb-3 font-medium text-muted-foreground">Especificación</th>
+                {selected.map((r) => (
+                  <th key={r.id} className="pb-3 font-bold">
+                    {racketName(r)}
+                  </th>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {selected.length > 0 && (
-            <div
-              className="mt-10 grid gap-4"
-              style={{ gridTemplateColumns: `repeat(${selected.length}, minmax(0, 1fr))` }}
-            >
-              {selected.map((r) => (
-                <RacketVisual
-                  key={r.id}
-                  label={racketName(r)}
-                  image={r.image}
-                  className="aspect-square"
-                />
-              ))}
-            </div>
-          )}
-
-          {selected.length > 0 && (
-            <div className="panel mt-6 overflow-x-auto">
-              <table className="w-full min-w-[640px] text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="p-4 text-left text-muted-foreground">Especificación</th>
-                    {selected.map((r) => (
-                      <th
-                        key={r.id}
-                        className="text-display p-4 text-left text-base font-extrabold"
-                      >
-                        {racketName(r)}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {ROWS.map(([label, fn]) => (
-                    <tr key={label} className="border-b border-border/60">
-                      <td className="p-4 text-muted-foreground">{label}</td>
-                      {selected.map((r) => (
-                        <td key={r.id} className="p-4 font-medium">
-                          {fn(r)}
-                        </td>
-                      ))}
-                    </tr>
+              </tr>
+            </thead>
+            <tbody>
+              {SPECS.map((s) => (
+                <tr key={s.label} className="border-b border-border/50 last:border-0">
+                  <td className="py-3 text-muted-foreground">{s.label}</td>
+                  {selected.map((r) => (
+                    <td key={r.id} className="py-3">
+                      {s.get(r)}
+                    </td>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-4 text-xs text-muted-foreground">{DERIVED_NOTE}</p>
+        </div>
+      )}
 
-          <section className="mt-12">
-            <h2 className="text-display text-3xl font-extrabold">¿Cuál es mejor para TI?</h2>
-            <div className="panel mt-5 p-6">
-              {!profile?.level ? (
-                <p className="text-muted-foreground">
-                  Completa primero el cuestionario y RacketIQ evaluará estos marcos contra tu
-                  propio perfil.
-                </p>
-              ) : selected.length < 2 ? (
-                <p className="text-muted-foreground">
-                  Agrega al menos dos raquetas para ver un veredicto personalizado.
-                </p>
-              ) : (
-                verdict && (
-                  <div className="space-y-4">
-                    <p className="text-lg">
-                      Mejor opción para tu perfil:{" "}
-                      <span className="text-display font-extrabold text-primary">
-                        {racketName(verdict.best.racket)} ({verdict.best.overall}%)
-                      </span>
-                    </p>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      {verdict.lines.map((l) => (
-                        <li key={l} className="flex gap-3">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          {l}
-                        </li>
-                      ))}
-                    </ul>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      {verdict.best.reasons.slice(0, 3).map((r) => (
-                        <li key={r} className="flex gap-3">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+      {verdict && (
+        <div className="panel elevated mt-8 p-6 md:p-8">
+          <h2 className="text-display text-2xl font-extrabold">¿Cuál es mejor para TI?</h2>
+          <p className="mt-3 text-lg font-semibold text-primary">
+            {racketName(verdict.best.racket)} — {verdict.best.overall}% de coincidencia
+          </p>
+          <ul className="mt-3 space-y-1.5">
+            {verdict.lines.map((l) => (
+              <li key={l} className="text-sm text-muted-foreground">
+                · {l}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {verdict.best.dimensions.map((d) => (
+              <ScoreBar key={d.key} label={d.label} value={d.score} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {selected.length >= 2 && !profile && (
+        <p className="mt-6 text-sm text-muted-foreground">
+          <Link to="/find-my-racket" className="font-semibold text-primary">
+            Responde el cuestionario
+          </Link>{" "}
+          para ver cuál de estas raquetas encaja mejor con tu juego.
+        </p>
+      )}
+      <p className="mt-8 text-xs text-muted-foreground">{CATALOG_DISCLAIMER}</p>
+    </>
+  );
+}
+
+function StringCompare() {
+  const [ids, setIds] = useState<string[]>([STRING_CATEGORIES[0]!.id, STRING_CATEGORIES[2]!.id]);
+  const selected = ids
+    .map((id) => STRING_CATEGORIES.find((c) => c.id === id)!)
+    .filter(Boolean);
+
+  const rows: { label: string; get: (c: (typeof STRING_CATEGORIES)[number]) => string }[] = [
+    { label: "Potencia", get: (c) => `${c.power}/10` },
+    { label: "Control", get: (c) => `${c.control}/10` },
+    { label: "Efecto", get: (c) => `${c.spin}/10` },
+    { label: "Comodidad", get: (c) => `${c.comfort}/10` },
+    { label: "Durabilidad", get: (c) => `${c.durability}/10` },
+    { label: "Tensión típica", get: (c) => c.tension },
+    { label: "Ideal para", get: (c) => c.bestFor },
+  ];
+
+  return (
+    <>
+      <div className="panel mt-8 flex flex-wrap gap-2 p-6">
+        {STRING_CATEGORIES.map((c) => {
+          const active = ids.includes(c.id);
+          return (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() =>
+                setIds((v) =>
+                  active ? v.filter((x) => x !== c.id) : v.length >= 3 ? v : [...v, c.id],
                 )
-              )}
-            </div>
-          </section>
+              }
+              className={`rounded-full border px-4 py-2 text-sm ${
+                active
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border text-muted-foreground"
+              }`}
+            >
+              {c.name}
+            </button>
+          );
+        })}
+      </div>
 
-          <p className="mt-10 text-xs text-muted-foreground">{DATA_DISCLAIMER}</p>
-        </Page>
-      </main>
-      <SiteFooter />
+      {selected.length >= 2 && (
+        <div className="panel mt-8 overflow-x-auto p-6 md:p-8">
+          <table className="w-full min-w-[540px] text-sm">
+            <thead>
+              <tr className="border-b border-border text-left">
+                <th className="pb-3 font-medium text-muted-foreground">Característica</th>
+                {selected.map((c) => (
+                  <th key={c.id} className="pb-3 font-bold">
+                    {c.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.label} className="border-b border-border/50 last:border-0">
+                  <td className="py-3 text-muted-foreground">{r.label}</td>
+                  {selected.map((c) => (
+                    <td key={c.id} className="py-3">
+                      {r.get(c)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p className="mt-8 text-xs text-muted-foreground">{STRINGS_DISCLAIMER}</p>
     </>
   );
 }

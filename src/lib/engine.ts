@@ -4,7 +4,8 @@
  * Transparent, deterministic weighted scoring. The racket database is the only
  * source of truth for specifications — nothing here invents specs.
  */
-import { RACKETS, racketName, type Racket } from "@/data/rackets";
+import { racketName, type EngineRacket as Racket } from "@/lib/racket-engine";
+import { patternOpenness } from "@/lib/racket-engine";
 import {
   DISLIKE_LABELS,
   IMPROVEMENT_LABELS,
@@ -49,10 +50,10 @@ function headSizeScore(profile: PlayerProfile, r: Racket) {
     // No stated preference: judge against the control/power balance requested.
     const wantsControl = profile.control - profile.power;
     const ideal = wantsControl >= 3 ? 97 : wantsControl <= -3 ? 101 : 99;
-    return clamp(100 - Math.abs(r.head_size - ideal) * 7);
+    return clamp(100 - Math.abs((r.head_size ?? 100) - ideal) * 7);
   }
   const pref = profile.headSize === "102+" ? 102 : Number(profile.headSize);
-  const diff = Math.abs(r.head_size - pref);
+  const diff = Math.abs((r.head_size ?? 100) - pref);
   return clamp(100 - diff * 12);
 }
 
@@ -66,7 +67,7 @@ function weightBand(w: number): [number, number] {
 function weightScore(profile: PlayerProfile, r: Racket) {
   if (!profile.weight || profile.weight === "any") {
     const ideal = 295 + (profile.stability - 5) * 2.5 - (profile.maneuverability - 5) * 1.5;
-    return clamp(100 - Math.abs(r.weight - ideal) * 2.5);
+    return clamp(100 - Math.abs((r.weight ?? 300) - ideal) * 2.5);
   }
   const bands: Record<string, [number, number]> = {
     u300: [285, 299],
@@ -74,18 +75,20 @@ function weightScore(profile: PlayerProfile, r: Racket) {
     "305-310": [305, 310],
     "310+": [310, 340],
   };
-  const [lo, hi] = bands[profile.weight] ?? weightBand(r.weight);
-  if (r.weight >= lo && r.weight <= hi) return 100;
-  const distance = r.weight < lo ? lo - r.weight : r.weight - hi;
+  const rw = r.weight ?? 300;
+  const [lo, hi] = bands[profile.weight] ?? weightBand(rw);
+  if (rw >= lo && rw <= hi) return 100;
+  const distance = rw < lo ? lo - rw : rw - hi;
   return clamp(100 - distance * 6);
 }
 
 function patternScore(profile: PlayerProfile, r: Racket) {
   if (!profile.pattern || profile.pattern === "any") return 88;
+  if (!r.string_pattern) return 70;
   if (r.string_pattern === profile.pattern) return 100;
-  // 16x20 / 16x18 sit between the two classic patterns.
-  if (r.string_pattern === "16x20" || r.string_pattern === "16x18") return 78;
-  return 55;
+  // Otherwise score by how close the pattern density is to the requested one.
+  const diff = Math.abs(patternOpenness(r.string_pattern) - patternOpenness(profile.pattern));
+  return clamp(100 - diff * 55);
 }
 
 function styleScore(profile: PlayerProfile, r: Racket) {
@@ -96,9 +99,10 @@ function styleScore(profile: PlayerProfile, r: Racket) {
 }
 
 function levelBucket(level: string): "beginner" | "intermediate" | "advanced" | "tournament" {
-  if (/Beginner/i.test(level) || /UTR 4/.test(level)) return "beginner";
-  if (/Intermediate/i.test(level) || /UTR 6/.test(level)) return "intermediate";
-  if (/Tournament/i.test(level) || /UTR 10/.test(level)) return "tournament";
+  const l = (level ?? "").toLowerCase();
+  if (l.startsWith("princip") || l.includes("beginner")) return "beginner";
+  if (l.startsWith("interm")) return "intermediate";
+  if (l.startsWith("compet") || l.startsWith("profes") || l.includes("tournament")) return "tournament";
   return "advanced";
 }
 
@@ -110,6 +114,7 @@ function levelScore(profile: PlayerProfile, r: Racket) {
 function balanceScore(profile: PlayerProfile, r: Racket) {
   if (!profile.balance || profile.balance === "any") return 82;
   // Balance point in cm from the butt cap; roughly <32 head-light, 32-32.5 even, >32.5 head-heavy for a 27" frame.
+  if (r.balance == null) return 75;
   const bucket = r.balance < 32 ? "head-light" : r.balance <= 32.5 ? "even" : "head-heavy";
   return bucket === profile.balance ? 100 : 65;
 }
@@ -123,6 +128,7 @@ function budgetScore(profile: PlayerProfile, r: Racket) {
     "350+": [350, Infinity],
   };
   const [lo, hi] = caps[profile.budget] ?? [0, Infinity];
+  if (r.price == null) return 80;
   if (r.price >= lo && r.price <= hi) return 100;
   if (profile.payMoreForFit)
     return r.price > hi ? clamp(100 - (r.price - hi) * 0.3) : clamp(100 - (lo - r.price) * 0.5);
@@ -263,16 +269,16 @@ export function scoreRacket(profile: PlayerProfile, r: Racket): MatchResult {
   };
 }
 
-export function recommend(profile: PlayerProfile, limit = 3): MatchResult[] {
-  const scored = RACKETS.map((r) => scoreRacket(profile, r)).sort((a, b) => b.overall - a.overall);
-  return scored.slice(0, limit).map((m) => ({ ...m, reasons: buildReasons(profile, m) }));
+export function recommend(profile: PlayerProfile, rackets: Racket[], limit = 3): MatchResult[] {
+  const scored = rackets.map((r) => scoreRacket(profile, r)).sort((a, b) => b.overall - a.overall);
+  return scored.slice(0, limit).map((m) => ({ ...m, reasons: buildReasons(profile, m, rackets) }));
 }
 
 /* ------------------------------------------------------------------ */
 /* Explanations — derived from the player's own answers + verified specs */
 /* ------------------------------------------------------------------ */
 
-function buildReasons(profile: PlayerProfile, m: MatchResult): string[] {
+function buildReasons(profile: PlayerProfile, m: MatchResult, all: Racket[] = []): string[] {
   const r = m.racket;
   const reasons: string[] = [];
   const dim = (k: string) => m.dimensions.find((d) => d.key === k)?.score ?? 0;
@@ -319,7 +325,7 @@ function buildReasons(profile: PlayerProfile, m: MatchResult): string[] {
     );
   }
   if (profile.currentRacketId) {
-    const cur = RACKETS.find((x) => x.id === profile.currentRacketId);
+    const cur = all.find((x) => x.id === profile.currentRacketId);
     if (cur && cur.id !== r.id) {
       const deltas: string[] = [];
       if (r.spin_score > cur.spin_score) deltas.push("más efecto");
@@ -510,7 +516,7 @@ export function recommendCustomization(
       goal: "Mantener la masa total para estabilidad mientras se desplaza el balance hacia atrás para un manejo más rápido.",
     });
   }
-  if (profile.improvements.includes("comfort") && r.stiffness >= 66) {
+  if (profile.improvements.includes("comfort") && (r.stiffness ?? 0) >= 66) {
     suggestions.push({
       item: "Configuración más suave + un grip de repuesto acolchado",
       goal: "Reducir el impacto en un marco más rígido antes de considerar cambios de peso.",

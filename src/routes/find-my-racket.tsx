@@ -4,7 +4,8 @@ import { ArrowLeft, ArrowRight, RotateCcw, Search } from "lucide-react";
 import { Page, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { RACKETS, racketName, type PlayerType } from "@/data/rackets";
+import { racketName, type PlayerType } from "@/lib/racket-engine";
+import { useRackets } from "@/lib/use-rackets";
 import {
   emptyProfile,
   clearProfile,
@@ -166,11 +167,13 @@ function Questionnaire() {
   const set = <K extends keyof PlayerProfile>(k: K, v: PlayerProfile[K]) =>
     setProfile((p) => ({ ...p, [k]: v }));
 
+  const { rackets } = useRackets();
+
   const matches = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return RACKETS.slice(0, 6);
-    return RACKETS.filter((r) => racketName(r).toLowerCase().includes(q)).slice(0, 8);
-  }, [search]);
+    if (!q) return rackets.slice(0, 6);
+    return rackets.filter((r) => racketName(r).toLowerCase().includes(q)).slice(0, 8);
+  }, [search, rackets]);
 
   const canContinue = (() => {
     switch (step) {

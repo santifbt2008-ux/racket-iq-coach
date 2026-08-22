@@ -12,14 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as FindMyRacketRouteImport } from './routes/find-my-racket'
+import { Route as ModifyRouteImport } from './routes/modify'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as StringsRouteImport } from './routes/strings'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CatalogIndexRouteImport } from './routes/catalog.index'
 import { Route as CatalogSlugRouteImport } from './routes/catalog.$slug'
-import { Route as ExploreIndexRouteImport } from './routes/explore.index'
-import { Route as ExploreRacketIdRouteImport } from './routes/explore.$racketId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,6 +37,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
@@ -45,15 +52,30 @@ const FindMyRacketRoute = FindMyRacketRouteImport.update({
   path: '/find-my-racket',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModifyRoute = ModifyRouteImport.update({
+  id: '/modify',
+  path: '/modify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StringsRoute = StringsRouteImport.update({
+  id: '/strings',
+  path: '/strings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogIndexRoute = CatalogIndexRouteImport.update({
   id: '/catalog/',
@@ -65,106 +87,110 @@ const CatalogSlugRoute = CatalogSlugRouteImport.update({
   path: '/catalog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreIndexRoute = ExploreIndexRouteImport.update({
-  id: '/explore/',
-  path: '/explore/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExploreRacketIdRoute = ExploreRacketIdRouteImport.update({
-  id: '/explore/$racketId',
-  path: '/explore/$racketId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/modify': typeof ModifyRoute
   '/results': typeof ResultsRoute
+  '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
-  '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog/': typeof CatalogIndexRoute
-  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/modify': typeof ModifyRoute
   '/results': typeof ResultsRoute
+  '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
-  '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog': typeof CatalogIndexRoute
-  '/explore': typeof ExploreIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
+  '/modify': typeof ModifyRoute
   '/results': typeof ResultsRoute
+  '/strings': typeof StringsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
-  '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog/': typeof CatalogIndexRoute
-  '/explore/': typeof ExploreIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/chat'
     | '/compare'
     | '/find-my-racket'
+    | '/modify'
     | '/results'
+    | '/strings'
     | '/admin'
+    | '/api/chat'
     | '/catalog/$slug'
-    | '/explore/$racketId'
     | '/catalog/'
-    | '/explore/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/chat'
     | '/compare'
     | '/find-my-racket'
+    | '/modify'
     | '/results'
+    | '/strings'
     | '/admin'
+    | '/api/chat'
     | '/catalog/$slug'
-    | '/explore/$racketId'
     | '/catalog'
-    | '/explore'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/chat'
     | '/compare'
     | '/find-my-racket'
+    | '/modify'
     | '/results'
+    | '/strings'
     | '/_authenticated/admin'
+    | '/api/chat'
     | '/catalog/$slug'
-    | '/explore/$racketId'
     | '/catalog/'
-    | '/explore/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ChatRoute: typeof ChatRoute
   CompareRoute: typeof CompareRoute
   FindMyRacketRoute: typeof FindMyRacketRoute
+  ModifyRoute: typeof ModifyRoute
   ResultsRoute: typeof ResultsRoute
+  StringsRoute: typeof StringsRoute
+  ApiChatRoute: typeof ApiChatRoute
   CatalogSlugRoute: typeof CatalogSlugRoute
-  ExploreRacketIdRoute: typeof ExploreRacketIdRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
-  ExploreIndexRoute: typeof ExploreIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -190,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/compare': {
       id: '/compare'
       path: '/compare'
@@ -204,11 +237,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FindMyRacketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/modify': {
+      id: '/modify'
+      path: '/modify'
+      fullPath: '/modify'
+      preLoaderRoute: typeof ModifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/results': {
       id: '/results'
       path: '/results'
       fullPath: '/results'
       preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strings': {
+      id: '/strings'
+      path: '/strings'
+      fullPath: '/strings'
+      preLoaderRoute: typeof StringsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -217,6 +264,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/catalog/': {
       id: '/catalog/'
@@ -230,20 +284,6 @@ declare module '@tanstack/react-router' {
       path: '/catalog/$slug'
       fullPath: '/catalog/$slug'
       preLoaderRoute: typeof CatalogSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore/': {
-      id: '/explore/'
-      path: '/explore'
-      fullPath: '/explore/'
-      preLoaderRoute: typeof ExploreIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore/$racketId': {
-      id: '/explore/$racketId'
-      path: '/explore/$racketId'
-      fullPath: '/explore/$racketId'
-      preLoaderRoute: typeof ExploreRacketIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -264,13 +304,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ChatRoute: ChatRoute,
   CompareRoute: CompareRoute,
   FindMyRacketRoute: FindMyRacketRoute,
+  ModifyRoute: ModifyRoute,
   ResultsRoute: ResultsRoute,
+  StringsRoute: StringsRoute,
+  ApiChatRoute: ApiChatRoute,
   CatalogSlugRoute: CatalogSlugRoute,
-  ExploreRacketIdRoute: ExploreRacketIdRoute,
   CatalogIndexRoute: CatalogIndexRoute,
-  ExploreIndexRoute: ExploreIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
