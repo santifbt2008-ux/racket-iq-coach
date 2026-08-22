@@ -151,7 +151,7 @@ function toPayload(draft: Draft) {
   payload["status"] = draft.is_current ?? true ? "current" : "discontinued";
   payload["source_verified"] = draft.source_verified ?? false;
   payload["incomplete_data"] = KEY_SPECS.some((k) => {
-    const v = payload[k] ?? draft[k];
+    const v = payload[k] ?? (draft as Record<string, unknown>)[k];
     return v === null || v === undefined || v === "";
   });
   return payload;
