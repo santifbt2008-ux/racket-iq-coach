@@ -4,7 +4,8 @@ import { ArrowLeft, ArrowRight, RotateCcw, Search } from "lucide-react";
 import { Page, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { RACKETS, racketName, type PlayerType } from "@/data/rackets";
+import { racketName, type PlayerType } from "@/lib/racket-engine";
+import { useRackets } from "@/lib/use-rackets";
 import {
   emptyProfile,
   clearProfile,
