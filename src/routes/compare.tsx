@@ -44,7 +44,10 @@ const SPECS: { label: string; get: (r: EngineRacket) => string }[] = [
   { label: "Patrón", get: (r) => r.string_pattern ?? "Sin dato" },
   { label: "Largo", get: (r) => (r.length != null ? `${r.length} in` : "Sin dato") },
   { label: "Composición", get: (r) => r.composition ?? "Sin dato" },
-  { label: "Tipo de jugador", get: (r) => r.stroke_style_label ?? "Sin dato" },
+  {
+    label: "Tipo de jugador",
+    get: (r) => (r.recommended_player_types.length ? r.recommended_player_types.join(", ") : "Sin dato"),
+  },
   { label: "Potencia (estimada)", get: (r) => `${r.power_score}/10` },
   { label: "Control (estimado)", get: (r) => `${r.control_score}/10` },
   { label: "Efecto (estimado)", get: (r) => `${r.spin_score}/10` },
