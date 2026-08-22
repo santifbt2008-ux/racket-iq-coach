@@ -16,6 +16,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as FindMyRacketRouteImport } from './routes/find-my-racket'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as StringsRouteImport } from './routes/strings'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CatalogIndexRouteImport } from './routes/catalog.index'
@@ -55,6 +56,11 @@ const ResultsRoute = ResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StringsRoute = StringsRouteImport.update({
+  id: '/strings',
+  path: '/strings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/strings': typeof StringsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/strings': typeof StringsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/catalog/$slug': typeof CatalogSlugRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/find-my-racket'
     | '/results'
+    | '/strings'
     | '/admin'
     | '/api/chat'
     | '/catalog/$slug'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/find-my-racket'
     | '/results'
+    | '/strings'
     | '/admin'
     | '/api/chat'
     | '/catalog/$slug'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/find-my-racket'
     | '/results'
+    | '/strings'
     | '/_authenticated/admin'
     | '/api/chat'
     | '/catalog/$slug'
@@ -162,6 +174,7 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   FindMyRacketRoute: typeof FindMyRacketRoute
   ResultsRoute: typeof ResultsRoute
+  StringsRoute: typeof StringsRoute
   ApiChatRoute: typeof ApiChatRoute
   CatalogSlugRoute: typeof CatalogSlugRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/strings': {
+      id: '/strings'
+      path: '/strings'
+      fullPath: '/strings'
+      preLoaderRoute: typeof StringsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -268,6 +288,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   FindMyRacketRoute: FindMyRacketRoute,
   ResultsRoute: ResultsRoute,
+  StringsRoute: StringsRoute,
   ApiChatRoute: ApiChatRoute,
   CatalogSlugRoute: CatalogSlugRoute,
   CatalogIndexRoute: CatalogIndexRoute,
