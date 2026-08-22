@@ -203,6 +203,12 @@ function Admin() {
               <p className="mt-2 text-sm text-muted-foreground">{rackets.length} registros en la base de datos.</p>
             </div>
             <div className="flex gap-3">
+              <Link
+                to="/audit"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-secondary"
+              >
+                Auditoría
+              </Link>
               <button
                 type="button"
                 onClick={() => setShowImport((v) => !v)}
