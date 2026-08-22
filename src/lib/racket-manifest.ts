@@ -41,7 +41,6 @@ export const RACKET_MANIFEST: ManifestEntry[] = [
   { brand: "HEAD", model: "Boom MP", year: 2026 },
   { brand: "HEAD", model: "Boom MP Alternate", year: 2026 },
   { brand: "HEAD", model: "Boom Team", year: 2026 },
-  { brand: "HEAD", model: "Boom Team L", year: 2026 },
   // HEAD — otras familias
   { brand: "HEAD", model: "Speed MP" },
   { brand: "HEAD", model: "Speed Pro" },
@@ -61,7 +60,7 @@ export const RACKET_MANIFEST: ManifestEntry[] = [
   { brand: "Tecnifibre", model: "Fire 305", year: 2026 },
   { brand: "Tecnifibre", model: "Fire 300", year: 2026 },
   { brand: "Tecnifibre", model: "Fire 285", year: 2026 },
-  { brand: "Tecnifibre", model: "Fire 275", year: 2026 },
+  { brand: "Tecnifibre", model: "Fire 270", year: 2026 },
   { brand: "Tecnifibre", model: "TFight 300 ISOFLEX" },
   { brand: "Tecnifibre", model: "TFight 305 ISOFLEX" },
   { brand: "Tecnifibre", model: "TF40 305 18x20" },
