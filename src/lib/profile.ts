@@ -136,7 +136,7 @@ export function useStoredProfile() {
 }
 
 export const AGE_OPTIONS: [PlayerProfile["age"], string][] = [
-  ["u13", "Under 13"],
+  ["u13", "Menos de 13"],
   ["13-17", "13–17"],
   ["18-30", "18–30"],
   ["31-50", "31–50"],
@@ -144,10 +144,10 @@ export const AGE_OPTIONS: [PlayerProfile["age"], string][] = [
 ];
 
 export const TRAINING_FREQUENCY_OPTIONS: [PlayerProfile["trainingFrequency"], string][] = [
-  ["none", "No formal training"],
-  ["1-2", "1–2 sessions/week"],
-  ["3-4", "3–4 sessions/week"],
-  ["5+", "5+ sessions/week"],
+  ["none", "Sin entrenamiento formal"],
+  ["1-2", "1–2 sesiones/semana"],
+  ["3-4", "3–4 sesiones/semana"],
+  ["5+", "5+ sesiones/semana"],
 ];
 
 export const GRIP_SIZE_OPTIONS: [PlayerProfile["gripSize"], string][] = [
@@ -156,29 +156,29 @@ export const GRIP_SIZE_OPTIONS: [PlayerProfile["gripSize"], string][] = [
   ["4_1_4", '4¼"'],
   ["4_3_8", '4⅜"'],
   ["4_1_2", '4½"'],
-  ["unsure", "Not sure"],
+  ["unsure", "No estoy seguro"],
 ];
 
 export const BALANCE_OPTIONS: [PlayerProfile["balance"], string][] = [
-  ["head-light", "Head-light (maneuverable)"],
-  ["even", "Even balance"],
-  ["head-heavy", "Head-heavy (more power/stability)"],
-  ["any", "No preference"],
+  ["head-light", "Balance en el mango (más maniobrable)"],
+  ["even", "Balance equilibrado"],
+  ["head-heavy", "Balance en la cabeza (más potencia/estabilidad)"],
+  ["any", "Sin preferencia"],
 ];
 
 export const BUDGET_OPTIONS: [PlayerProfile["budget"], string][] = [
-  ["u150", "Under $150"],
-  ["150-250", "$150–$250"],
-  ["250-350", "$250–$350"],
-  ["350+", "$350+"],
-  ["any", "No strict budget"],
+  ["u150", "Menos de $2,800 MXN"],
+  ["150-250", "$2,800–$4,600 MXN"],
+  ["250-350", "$4,600–$6,500 MXN"],
+  ["350+", "Más de $6,500 MXN"],
+  ["any", "Sin presupuesto fijo"],
 ];
 
 export const LEVEL_OPTIONS = [
-  "Beginner",
-  "Intermediate",
-  "Advanced",
-  "Tournament Player",
+  "Principiante",
+  "Intermedio",
+  "Avanzado",
+  "Jugador de torneos",
   "UTR 4–6",
   "UTR 6–8",
   "UTR 8–10",
@@ -186,45 +186,45 @@ export const LEVEL_OPTIONS = [
 ];
 
 export const IMPROVEMENT_LABELS: Record<Improvement, string> = {
-  power: "More power",
-  control: "More control",
-  spin: "More spin",
-  sweetspot: "Bigger sweet spot",
-  stability: "More stability",
-  maneuverability: "Better maneuverability",
-  comfort: "More comfort",
-  serve: "Better serve",
-  feel: "Better feel",
+  power: "Más potencia",
+  control: "Más control",
+  spin: "Más efecto",
+  sweetspot: "Punto dulce más grande",
+  stability: "Más estabilidad",
+  maneuverability: "Mejor maniobrabilidad",
+  comfort: "Más comodidad",
+  serve: "Mejor saque",
+  feel: "Mejor sensación",
 };
 
 export const STYLE_LABELS: Record<PlayerType, string> = {
-  "aggressive-baseliner": "Aggressive baseliner",
-  "all-court": "All-court player",
-  counterpuncher: "Counterpuncher",
-  "serve-volley": "Serve & volley",
-  defensive: "Defensive player",
+  "aggressive-baseliner": "Jugador de fondo agresivo",
+  "all-court": "Jugador todocancha",
+  counterpuncher: "Contragolpeador",
+  "serve-volley": "Saque y volea",
+  defensive: "Jugador defensivo",
 };
 
 export const LIKE_LABELS: Record<Improvement, string> = {
-  power: "Its power",
-  control: "Its control / precision",
-  spin: "The spin it generates",
-  sweetspot: "The sweet spot size",
-  stability: "How stable it feels",
-  maneuverability: "How fast it swings",
-  comfort: "Comfort on the arm",
-  serve: "How it serves",
-  feel: "The feel / touch",
+  power: "Su potencia",
+  control: "Su control / precisión",
+  spin: "El efecto que genera",
+  sweetspot: "El tamaño del punto dulce",
+  stability: "Qué tan estable se siente",
+  maneuverability: "Qué tan rápido se mueve",
+  comfort: "Comodidad para el brazo",
+  serve: "Cómo saca con ella",
+  feel: "La sensación / tacto",
 };
 
 export const DISLIKE_LABELS: Record<Improvement, string> = {
-  power: "Not enough power",
-  control: "Too little control — balls fly long",
-  spin: "Can't generate enough spin",
-  sweetspot: "Sweet spot feels too small",
-  stability: "Gets pushed around by pace",
-  maneuverability: "Too slow / heavy to swing",
-  comfort: "Harsh or uncomfortable on the arm",
-  serve: "Serve lacks pace or bite",
-  feel: "Feels muted or boardy",
+  power: "No tiene suficiente potencia",
+  control: "Muy poco control — las bolas se van largas",
+  spin: "No genera suficiente efecto",
+  sweetspot: "El punto dulce se siente muy pequeño",
+  stability: "Se descontrola con la velocidad de la pelota",
+  maneuverability: "Muy lenta / pesada para moverla",
+  comfort: "Dura o incómoda para el brazo",
+  serve: "Al saque le falta velocidad o mordida",
+  feel: "Se siente apagada o sin tacto",
 };
