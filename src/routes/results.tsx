@@ -164,7 +164,7 @@ function ResultsBody({
             <Spec label="Patrón" value={best.racket.string_pattern} />
             <Spec label="Swingweight" value={best.racket.swingweight} />
             <Spec label="Rigidez (RA)" value={best.racket.stiffness} />
-            <Spec label="Perfil" value={best.racket.beam_width} />
+            <Spec label="Perfil" value={best.racket.beam} />
             <Spec label="Largo" value={best.racket.length ? `${best.racket.length} in` : null} />
           </div>
 
