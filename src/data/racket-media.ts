@@ -74,4 +74,4 @@ export function resolveRacketImage(racketId: string): RacketImage | null {
 }
 
 export const IMAGE_POLICY_NOTE =
-  "Racket photography is only shown when we hold a documented licence (manufacturer media kit, authorized affiliate/product feed, or commercially reusable image). Otherwise we render our own illustration.";
+  "Las fotografías de raquetas solo se muestran cuando contamos con una licencia documentada (kit de prensa del fabricante, feed de afiliados/productos autorizado o imagen de reutilización comercial). De lo contrario, mostramos nuestra propia ilustración.";

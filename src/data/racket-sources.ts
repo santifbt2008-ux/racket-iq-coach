@@ -59,9 +59,9 @@ export interface ProductLink {
 export function resolveProductLink(racketId: string, brand: string): ProductLink | null {
   for (const p of providers) {
     const url = p.getUrl(racketId);
-    if (url) return { url, label: "View product", exact: true };
+    if (url) return { url, label: "Ver producto", exact: true };
   }
   const brandSource = BRAND_SOURCES[brand];
-  if (brandSource) return { url: brandSource.catalog, label: `View on ${brand}.com`, exact: false };
+  if (brandSource) return { url: brandSource.catalog, label: `Ver en ${brand}.com`, exact: false };
   return null;
 }
