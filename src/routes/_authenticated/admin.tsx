@@ -134,7 +134,7 @@ function Admin() {
     mutationFn: async (d: Draft) => {
       const payload = toPayload(d);
       if (d.id) {
-        const { error } = await supabase.from("rackets").update(payload).eq("id", d.id);
+        const { error } = await supabase.from("rackets").update(payload as never).eq("id", d.id);
         if (error) throw new Error(error.message);
       } else {
         const { error } = await supabase.from("rackets").insert(payload as never);

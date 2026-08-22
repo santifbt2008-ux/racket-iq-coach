@@ -10,10 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as FindMyRacketRouteImport } from './routes/find-my-racket'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CatalogIndexRouteImport } from './routes/catalog.index'
 import { Route as CatalogSlugRouteImport } from './routes/catalog.$slug'
 import { Route as ExploreIndexRouteImport } from './routes/explore.index'
@@ -22,6 +24,10 @@ import { Route as ExploreRacketIdRouteImport } from './routes/explore.$racketId'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -43,6 +49,11 @@ const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const CatalogIndexRoute = CatalogIndexRouteImport.update({
   id: '/catalog/',
@@ -71,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/catalog/$slug': typeof CatalogSlugRoute
   '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog/': typeof CatalogIndexRoute
@@ -82,6 +94,7 @@ export interface FileRoutesByTo {
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/catalog/$slug': typeof CatalogSlugRoute
   '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog': typeof CatalogIndexRoute
@@ -90,10 +103,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/compare': typeof CompareRoute
   '/find-my-racket': typeof FindMyRacketRoute
   '/results': typeof ResultsRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/catalog/$slug': typeof CatalogSlugRoute
   '/explore/$racketId': typeof ExploreRacketIdRoute
   '/catalog/': typeof CatalogIndexRoute
@@ -107,6 +122,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/find-my-racket'
     | '/results'
+    | '/admin'
     | '/catalog/$slug'
     | '/explore/$racketId'
     | '/catalog/'
@@ -118,6 +134,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/find-my-racket'
     | '/results'
+    | '/admin'
     | '/catalog/$slug'
     | '/explore/$racketId'
     | '/catalog'
@@ -125,10 +142,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/auth'
     | '/compare'
     | '/find-my-racket'
     | '/results'
+    | '/_authenticated/admin'
     | '/catalog/$slug'
     | '/explore/$racketId'
     | '/catalog/'
@@ -137,6 +156,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CompareRoute: typeof CompareRoute
   FindMyRacketRoute: typeof FindMyRacketRoute
@@ -154,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -183,6 +210,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/results'
       preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/catalog/': {
       id: '/catalog/'
@@ -215,8 +249,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CompareRoute: CompareRoute,
   FindMyRacketRoute: FindMyRacketRoute,
